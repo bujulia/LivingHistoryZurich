@@ -1,0 +1,110 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="ch.ethz.ikg.gis.livinghistory.filterMenu">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/lblDaten"
+        android:id="@+id/lblDaten"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/lblSuchdis"
+        android:id="@+id/lblSuchdis"
+        android:layout_marginTop="34dp"
+        android:layout_below="@+id/lblDaten"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/lblGarten"
+        android:id="@+id/lblGarten"
+        android:layout_below="@+id/lblSuchdis"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="82dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/lblDenhm"
+        android:id="@+id/lblDenhm"
+        android:layout_marginTop="82dp"
+        android:layout_below="@+id/lblGarten"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/lblJahr"
+        android:id="@+id/lblJahr"
+        android:layout_below="@+id/lblDenhm"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:id="@+id/distInput"
+        android:layout_below="@+id/lblSuchdis"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/lblSuchdis" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:id="@+id/startInput"
+        android:layout_below="@+id/lblJahr"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/distInput" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/lblMeter"
+        android:id="@+id/lblMeter"
+        android:layout_below="@+id/lblSuchdis"
+        android:layout_alignEnd="@+id/lblBis" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:id="@+id/endInput"
+        android:layout_alignTop="@+id/startInput"
+        android:layout_toEndOf="@+id/lblBis" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/lblBis"
+        android:id="@+id/lblBis"
+        android:layout_alignTop="@+id/endInput"
+        android:layout_toEndOf="@+id/lblDenhm" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/buttonAnwenden"
+        android:id="@+id/anwendenButton"
+        android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@+id/endInput"
+        android:layout_marginBottom="33dp" />
+
+</RelativeLayout>
