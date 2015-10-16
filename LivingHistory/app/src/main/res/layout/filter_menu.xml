@@ -39,8 +39,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/lblDenhm"
-        android:id="@+id/lblDenhm"
+        android:text="@string/lblDenkm"
+        android:id="@+id/lblDenkm"
         android:layout_marginTop="82dp"
         android:layout_below="@+id/lblGarten"
         android:layout_alignParentStart="true" />
@@ -51,17 +51,18 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/lblJahr"
         android:id="@+id/lblJahr"
-        android:layout_below="@+id/lblDenhm"
+        android:layout_below="@+id/lblDenkm"
         android:layout_alignParentStart="true" />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="100dip"
         android:layout_height="wrap_content"
         android:ems="10"
         android:id="@+id/distInput"
         android:layout_below="@+id/lblSuchdis"
         android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/lblSuchdis" />
+        android:layout_alignEnd="@+id/lblSuchdis"
+        android:hint="@string/lblMeter"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -70,16 +71,8 @@
         android:id="@+id/startInput"
         android:layout_below="@+id/lblJahr"
         android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/distInput" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/lblMeter"
-        android:id="@+id/lblMeter"
-        android:layout_below="@+id/lblSuchdis"
-        android:layout_alignEnd="@+id/lblBis" />
+        android:layout_alignEnd="@+id/distInput"
+        android:hint="@string/lblJahr"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -87,7 +80,17 @@
         android:ems="10"
         android:id="@+id/endInput"
         android:layout_alignTop="@+id/startInput"
-        android:layout_toEndOf="@+id/lblBis" />
+        android:layout_toEndOf="@+id/lblBis"
+        android:hint="@string/lblJahr"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/lblMeter"
+        android:id="@+id/lblMeter"
+        android:layout_alignBottom="@+id/distInput"
+        android:layout_toStartOf="@+id/endInput" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -95,8 +98,8 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/lblBis"
         android:id="@+id/lblBis"
-        android:layout_alignTop="@+id/endInput"
-        android:layout_toEndOf="@+id/lblDenhm" />
+        android:layout_alignBottom="@+id/endInput"
+        android:layout_toEndOf="@+id/lblDenkm" />
 
     <Button
         android:layout_width="wrap_content"
