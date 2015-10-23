@@ -102,18 +102,18 @@ public class MainActivity extends Activity {
         });
 
         //Define what filterButton will do on a click
-        /*filterButton.setOnClickListener(new View.OnClickListener() {
+        filterButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 triggerFilterButtonAction();
             }
-        });*/
+        });
 
         //Define what tourenButton will do on a click
-        /*tourenButton.setOnClickListener(new View.OnClickListener() {
+        tourenButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 triggerTourenButtonAction();
             }
-        });*/
+        });
     }
 
     //Opens or closes the list of possible karten options
@@ -139,16 +139,16 @@ public class MainActivity extends Activity {
     }
 
     //Creates a new intent -> opens the filter menu
-    /*private void triggerFilterButtonAction(){
+    private void triggerFilterButtonAction(){
         Intent intent = new Intent(this,filterMenu.class);
         startActivity(intent);
-    }*/
+    }
 
     //Creates a new intent -> opens the touren menu
-    /*private void triggerTourenButtonAction(){
+    private void triggerTourenButtonAction(){
         Intent intent = new Intent(this,tourenMenu.class);
         startActivity(intent);
-    }*/
+    }
 
     //Responds when a radio button is clicked, showing a basemap for the year of choice
     public void onRadioButtonClicked(View view){

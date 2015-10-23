@@ -27,10 +27,10 @@
     <string name="lblBis">Bis</string>
     <string name="lblMeter">Meter</string>
     <string name="buttonAnwenden">Anwenden</string>
+    <string name="buttonBack">Zurück</string>
 
     <string name="title_activity_touren_menu">Touren</string>
 
     <string name="featureServiceURL">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/Tour01/FeatureServer/2</string>
-
 
 </resources>
