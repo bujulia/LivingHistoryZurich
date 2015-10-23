@@ -75,6 +75,10 @@ public class MainActivity extends Activity {
         //wmsLayer.setOpacity();
         mMapView.addLayer(wmsLayer);
 
+        /* String URL = "http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/ArcGIS/rest/services/Tour01/FeatureServer/2";
+        ArcGISFeatureLayer fLayer = new ArcGISFeatureLayer(URL, MODE.ONDEMAND);
+        */
+
         // Set the Esri logo to be visible, and enable map to wrap around date line.
         mMapView.setEsriLogoVisible(true);
         mMapView.enableWrapAround(true);
