@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Living History</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="buttonKarten">Karten</string>
+    <string name="buttonEbenen">Ebenen</string>
+    <string name="buttonFilter">Filter</string>
+    <string name="buttonTouren">Touren</string>
+
+
+    <string name="radioAktuell">Aktuell</string>
+    <string name="radio1970">1970</string>
+    <string name="radio1900">1900</string>
+    <string name="radio1860">1860</string>
+    <string name="radio1793">1793</string>
+    <string name="checkDenkm">Denkmalpflege</string>
+    <string name="checkGarten">Gartendenkmal</string>
+    <string name="checkAussicht">Aussichtspunkte</string>
+
+    <string name="title_activity_filter_menu">Filter</string>
+    <string name="lblDaten">Daten filtern</string>
+    <string name="lblSuchdis">Suchdistanz</string>
+    <string name="lblGarten">Gartentyp</string>
+    <string name="lblDenkm">Denkmalobjekte</string>
+    <string name="lblJahr">Jahr</string>
+    <string name="lblBis">Bis</string>
+    <string name="lblMeter">Meter</string>
+    <string name="buttonAnwenden">Anwenden</string>
+
+    <string name="title_activity_touren_menu">Touren</string>
+
+    <string name="featureServiceURL">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/Tour01/FeatureServer/2</string>
+
+
+</resources>
