@@ -7,12 +7,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.esri.android.map.GraphicsLayer;
 import com.esri.android.map.MapView;
@@ -43,6 +47,8 @@ public class MainActivity extends Activity {
     private RadioGroup kartenOption;
     private LinearLayout ebenenOption;
 
+    private AutoCompleteTextView autoComplete;
+    private ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +84,27 @@ public class MainActivity extends Activity {
         tourenButton = (Button) findViewById(R.id.tourenButton);
         kartenOption = (RadioGroup) findViewById(R.id.kartenOption);
         ebenenOption = (LinearLayout) findViewById(R.id.ebenenOption);
+
+
+        //************************************** Autocomplete ***********************************//
+        // get the defined string-array
+        final String[] colors = getResources().getStringArray(R.array.colorList);
+        adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,colors);
+        autoComplete = (AutoCompleteTextView) findViewById(R.id.autoComplete);
+        // set adapter for the auto complete fields
+        autoComplete.setAdapter(adapter);
+        // specify the minimum type of characters before drop-down list is shown
+        autoComplete.setThreshold(1);
+        autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // onObjectZoom();   <-- Define a function that is called when the user clicks on an item from the dropdown
+                String colorMessage= colors[position];
+                Toast toast = Toast.makeText(getApplicationContext(), colorMessage, Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
+        //************************************** Autocomplete ***********************************//
 
 
         //Define what kartenButton will do on a click
@@ -222,6 +249,7 @@ public class MainActivity extends Activity {
 
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
