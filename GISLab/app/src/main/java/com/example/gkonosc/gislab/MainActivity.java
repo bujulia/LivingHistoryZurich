@@ -28,13 +28,15 @@ public class MainActivity extends Activity {
 
     //charis
     MapView mMapView;
-    ArcGISFeatureLayer mFeatureLayer;
+    public ArcGISFeatureLayer mFeatureLayer;
     GraphicsLayer mGraphicsLayer;
     boolean mIsMapLoaded;
     String mFeatureServiceURL;
     WMSLayer wmsLayer;
     String wmsURL;
     public String visible;
+    private WMSLayer oldWMS;
+    final static int selectedTour = 1234;
 
     //References to GUI elements
     private Button kartenButton;
@@ -66,15 +68,6 @@ public class MainActivity extends Activity {
         String[] visibleLayers = {"Uebersichtsplan"};
         wmsLayer.setVisibleLayer(visibleLayers);
         mMapView.addLayer(wmsLayer);
-
-/*        // Get the feature service URL from values->strings.xml
-        mFeatureServiceURL = this.getResources().getString(R.string.featureServiceURL);
-        // Add Feature layer to the MapView
-        mFeatureLayer = new ArcGISFeatureLayer(mFeatureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND);
-        mMapView.addLayer(mFeatureLayer);
-        // Add Graphics layer to the MapView
-        mGraphicsLayer = new GraphicsLayer();
-        mMapView.addLayer(mGraphicsLayer);*/
 
         mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
             public void onStatusChanged(Object source, STATUS status) {
@@ -173,14 +166,15 @@ public class MainActivity extends Activity {
 
     //Creates a new intent -> opens the touren menu
     private void triggerTourenButtonAction(){
-        Intent intent = new Intent(this,tourenMenu.class);
-        startActivity(intent);
+        Intent myIntent = new Intent(getBaseContext(),tourenMenu.class);
+        myIntent.setAction(Intent.ACTION_VIEW);
+        startActivityForResult(myIntent, selectedTour);
     }
 
     //Responds when a radio button is clicked, showing a basemap for the year of choice
     public void onRadioButtonClicked(View view){
         boolean checked = ((RadioButton) view).isChecked();
-        mMapView.removeLayer(wmsLayer);
+        oldWMS = wmsLayer;
 
         switch (view.getId()){
             //Radio button for the basemap of today
@@ -221,7 +215,7 @@ public class MainActivity extends Activity {
         String[] newVisibleLayer = {visible};
         wmsLayer.setVisibleLayer(newVisibleLayer);
         mMapView.addLayer(wmsLayer);
-
+        mMapView.removeLayer(oldWMS);
         ;}
 
     //Responds when a click box is clicked, showing the different layers
@@ -278,6 +272,20 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == selectedTour) {
+        // Get the feature service URL from values->strings.xml
+        mFeatureServiceURL = this.getResources().getString(R.string.featureServiceURL);
+        // Add Feature layer to the MapView
+        mFeatureLayer = new ArcGISFeatureLayer(mFeatureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND);
+        mMapView.addLayer(mFeatureLayer);
+        // Add Graphics layer to the MapView
+        mGraphicsLayer = new GraphicsLayer();
+        mMapView.addLayer(mGraphicsLayer);
+        }
+    }
 
 }
 

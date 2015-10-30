@@ -1,6 +1,7 @@
 package com.example.gkonosc.gislab;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,13 +15,6 @@ import com.esri.android.map.ags.ArcGISFeatureLayer;
 
 
 public class tourenMenu extends Activity {
-
-    // charis
-    ArcGISFeatureLayer mFeatureLayer;
-    GraphicsLayer mGraphicsLayer;
-    String mFeatureServiceURL;
-    MapView mMapView;
-    //
 
     //References to GUI elements
     private Button zuruckButton;
@@ -40,10 +34,10 @@ public class tourenMenu extends Activity {
             public void onClick(View v) {triggerZuruckButtonAction(); }
         });
 
-        /*//Define what Tour1Button will do on a click
+        //Define what Tour1Button will do on a click
         Tour1Button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {triggerTour1ButtonAction(); }
-        });*/
+        });
     }
 
     //Finishing the activity
@@ -51,17 +45,10 @@ public class tourenMenu extends Activity {
         this.finish();
     }
 
-    /*private void triggerTour1ButtonAction(){
-        // Get the feature service URL from values->strings.xml
-        mFeatureServiceURL = this.getResources().getString(R.string.featureServiceURL);
-        // Add Feature layer to the MapView
-        mFeatureLayer = new ArcGISFeatureLayer(mFeatureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND);
-        mMapView.addLayer(mFeatureLayer);
-        // Add Graphics layer to the MapView
-        mGraphicsLayer = new GraphicsLayer();
-        mMapView.addLayer(mGraphicsLayer);
-        this.finish();
-    }*/
+    private void triggerTour1ButtonAction(){
+        setResult(1);
+        finish();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
