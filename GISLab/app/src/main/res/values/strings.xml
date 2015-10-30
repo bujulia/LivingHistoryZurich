@@ -32,5 +32,33 @@
     <string name="title_activity_touren_menu">Touren</string>
 
     <string name="featureServiceURL">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/Tour01/FeatureServer/2</string>
+    <string name="GartendenkmalURL">http://www.gis.stadt-zuerich.ch/maps/services/wms/WMS-ZH-STZH-OGD/MapServer/WFSServer</string>
+
+    <string-array name="colorList">
+        <item >Black</item>
+        <item >White</item>
+        <item >Red</item>
+        <item >Blue</item>
+        <item >Yellow</item>
+        <item >Green</item>
+        <item >Brown</item>
+        <item >Pink</item>
+        <item >Orange</item>
+        <item >Purple</item>
+    </string-array>
+
+    <string-array name="gartenTypen">
+        <item>Friedhof </item>
+        <item>Garten oder Anlage bei Mehrfamilienhaus oder Reihenhaussiedlung </item>
+        <item>Haus- oder Villengarten </item>
+        <item>Kirchenumgebung </item>
+        <item>Oeffentliche oder halböffentliche Anlage </item>
+        <item>Schulhausanlage </item>
+        <item>Strand- oder Freibad</item>
+        <item>Uebrige Anlage oder Garten</item>
+        <item>Vorgarten</item>
+        <item>Bäuerliche Umgebung</item>
+        <item>-</item>
+    </string-array>
 
 </resources>
