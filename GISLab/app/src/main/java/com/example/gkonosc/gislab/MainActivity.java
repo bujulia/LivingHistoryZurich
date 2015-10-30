@@ -28,8 +28,9 @@ public class MainActivity extends Activity {
     GraphicsLayer mGraphicsLayer;
     boolean mIsMapLoaded;
     String mFeatureServiceURL;
-    //WMSLayer wmsLayer;
-    //String wmsURL;
+    WMSLayer wmsLayer;
+    String wmsURL;
+    public String visible;
 
     //References to GUI elements
     private Button kartenButton;
@@ -39,6 +40,7 @@ public class MainActivity extends Activity {
     private SearchView searchOption;
     private RadioGroup kartenOption;
     private LinearLayout ebenenOption;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,25 +52,23 @@ public class MainActivity extends Activity {
         // the map can be accessed from the layout
         mMapView = (MapView)findViewById(R.id.map);
 
-        // Get the feature service URL from values->strings.xml
+        // set up the wms url
+        wmsURL = "http://www.gis.stadt-zuerich.ch/maps/services/wms/WMS-ZH-STZH-OGD/MapServer/WMSServer";
+        wmsLayer = new WMSLayer(wmsURL);
+        wmsLayer.setImageFormat("image/png");
+        // starting wms layer
+        String[] visibleLayers = {"Uebersichtsplan"};
+        wmsLayer.setVisibleLayer(visibleLayers);
+        mMapView.addLayer(wmsLayer);
+
+/*        // Get the feature service URL from values->strings.xml
         mFeatureServiceURL = this.getResources().getString(R.string.featureServiceURL);
         // Add Feature layer to the MapView
         mFeatureLayer = new ArcGISFeatureLayer(mFeatureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND);
         mMapView.addLayer(mFeatureLayer);
         // Add Graphics layer to the MapView
         mGraphicsLayer = new GraphicsLayer();
-        mMapView.addLayer(mGraphicsLayer);
-
-        // set up the wms url
-        /*wmsURL = "http://www.gis.stadt-zuerich.ch/maps/services/wms/WMS-ZH-STZH-OGD/MapServer/WMSServer";
-        wmsLayer = new WMSLayer(wmsURL);
-        wmsLayer.setImageFormat("image/png");
-        // available layers
-        String[] visibleLayers = {"Uebersichtsplan"};
-        //  String[] visibleLayers = {"Uebersichtsplan", "Uebersichtsplan_1970", "Uebersichtsplan_1900", "Uebersichtsplan_1860", "Uebersichtsplan_1793"};
-        wmsLayer.setVisibleLayer(visibleLayers);
-        //wmsLayer.setOpacity();
-        mMapView.addLayer(wmsLayer);*/
+        mMapView.addLayer(mGraphicsLayer);*/
 
         mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
             public void onStatusChanged(Object source, STATUS status) {
@@ -153,40 +153,49 @@ public class MainActivity extends Activity {
     //Responds when a radio button is clicked, showing a basemap for the year of choice
     public void onRadioButtonClicked(View view){
         boolean checked = ((RadioButton) view).isChecked();
+        mMapView.removeLayer(wmsLayer);
 
         switch (view.getId()){
             //Radio button for the basemap of today
             case R.id.radioAktuell:
                 if (checked)
-                    //Calls the basemap
+                    visible = "Uebersichtsplan";
                     break;
 
                 //Radio button for the basemap of 1970
             case R.id.radio1970:
                 if (checked)
-                    //Calls the basemap
+                    visible = "Uebersichtsplan_1970";
                     break;
 
                 //Radio button for the basemap of 1900
             case R.id.radio1900:
                 if (checked)
-                    //Calls the basemap
+                    visible = "Stadtplan_1900";
                     break;
 
                 //Radio button for the basemap of 1860
             case R.id.radio1860:
                 if (checked)
-                    //Calls the basemap
+                    visible = "Stadtplan_1860";
                     break;
 
                 //Radio button for the basemap of 1793
             case R.id.radio1793:
                 if (checked)
-                    //Calls the basemap
+                    visible = "Stadtplan_1793";
                     break;
-
         }
-        ;    }
+
+        // set up the wms url
+        wmsURL = "http://www.gis.stadt-zuerich.ch/maps/services/wms/WMS-ZH-STZH-OGD/MapServer/WMSServer";
+        wmsLayer = new WMSLayer(wmsURL);
+        wmsLayer.setImageFormat("image/png");
+        String[] newVisibleLayer = {visible};
+        wmsLayer.setVisibleLayer(newVisibleLayer);
+        mMapView.addLayer(wmsLayer);
+
+        ;}
 
     //Responds when a click box is clicked, showing the different layers
     public void onCheckBoxClicked(View view) {
