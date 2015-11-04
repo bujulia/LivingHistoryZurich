@@ -4,7 +4,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="ch.ethz.ikg.gis.livinghistory.filterMenu">
+    tools:context=".filterMenu">
 
     <TextView
         android:layout_width="wrap_content"
@@ -13,7 +13,8 @@
         android:text="@string/lblDaten"
         android:id="@+id/lblDaten"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -21,9 +22,9 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/lblSuchdis"
         android:id="@+id/lblSuchdis"
-        android:layout_marginTop="34dp"
-        android:layout_below="@+id/lblDaten"
-        android:layout_alignParentStart="true" />
+        android:layout_below="@+id/backButton"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -31,9 +32,10 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/lblGarten"
         android:id="@+id/lblGarten"
-        android:layout_below="@+id/lblSuchdis"
+        android:layout_above="@+id/lblDenkm"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="82dp" />
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="68dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -41,9 +43,9 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/lblDenkm"
         android:id="@+id/lblDenkm"
-        android:layout_marginTop="82dp"
-        android:layout_below="@+id/lblGarten"
-        android:layout_alignParentStart="true" />
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -52,7 +54,8 @@
         android:text="@string/lblJahr"
         android:id="@+id/lblJahr"
         android:layout_below="@+id/lblDenkm"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"/>
 
     <EditText
         android:layout_width="100dip"
@@ -61,27 +64,33 @@
         android:id="@+id/distInput"
         android:layout_below="@+id/lblSuchdis"
         android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignEnd="@+id/lblSuchdis"
-        android:hint="@string/lblMeter"/>
+        android:layout_alignRight="@+id/lblSuchdis"
+        android:hint="@string/lblMeter"
+        android:maxLength="5"/>
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:ems="10"
         android:id="@+id/startInput"
-        android:layout_below="@+id/lblJahr"
+        android:hint="@string/lblJahr"
+        android:maxLength="4"
+        android:layout_alignBottom="@+id/lblBis"
         android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/distInput"
-        android:hint="@string/lblJahr"/>
+        android:layout_alignParentLeft="true"/>
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:ems="10"
         android:id="@+id/endInput"
-        android:layout_alignTop="@+id/startInput"
-        android:layout_toEndOf="@+id/lblBis"
-        android:hint="@string/lblJahr"/>
+        android:hint="@string/lblJahr"
+        android:maxLength="4"
+        android:layout_below="@+id/lblJahr"
+        android:layout_toStartOf="@+id/backButton"
+        android:layout_toLeftOf="@+id/backButton" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -90,7 +99,8 @@
         android:text="@string/lblMeter"
         android:id="@+id/lblMeter"
         android:layout_alignBottom="@+id/distInput"
-        android:layout_toStartOf="@+id/endInput" />
+        android:layout_toEndOf="@+id/lblDenkm"
+        android:layout_toRightOf="@+id/lblDenkm" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -99,15 +109,28 @@
         android:text="@string/lblBis"
         android:id="@+id/lblBis"
         android:layout_alignBottom="@+id/endInput"
-        android:layout_toEndOf="@+id/lblDenkm" />
+        android:layout_toEndOf="@+id/lblDenkm"
+        android:layout_toRightOf="@+id/lblDenkm"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/buttonAnwenden"
         android:id="@+id/anwendenButton"
+        android:layout_marginBottom="38dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignEnd="@+id/endInput"
-        android:layout_marginBottom="33dp" />
+        android:layout_alignEnd="@+id/backButton"
+        android:layout_alignRight="@+id/backButton" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/buttonBack"
+        android:id="@+id/backButton"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"/>
+
 
 </RelativeLayout>

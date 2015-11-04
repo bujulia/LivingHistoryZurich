@@ -23,7 +23,7 @@
         android:drawableTop="@drawable/symbol_map"
         android:background="@android:color/transparent"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentLeft="true" />
 
     <Button
         android:text="@string/buttonEbenen"
@@ -31,7 +31,7 @@
         android:layout_width="80dip"
         android:layout_height="80dip"
         android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/kartenButton"
+        android:layout_toRightOf="@+id/kartenButton"
         android:drawableTop="@drawable/symbol_layers"
         android:background="@android:color/transparent"/>
 
@@ -41,7 +41,7 @@
         android:layout_width="80dip"
         android:layout_height="80dip"
         android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/ebenenButton"
+        android:layout_toRightOf="@+id/ebenenButton"
         android:drawableTop="@drawable/symbol_filter"
         android:background="@android:color/transparent"/>
 
@@ -51,7 +51,7 @@
         android:layout_width="80dip"
         android:layout_height="80dip"
         android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/filterButton"
+        android:layout_toRightOf="@+id/filterButton"
         android:focusableInTouchMode="false"
         android:drawableTop="@drawable/symbol_tours"
         android:background="@android:color/transparent"/>
@@ -61,8 +61,8 @@
         android:layout_height="wrap_content"
         android:id = "@+id/kartenOption"
         android:layout_above="@+id/kartenButton"
-        android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/ebenenButton"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/ebenenButton"
         android:visibility="invisible">
 
         <RadioButton
@@ -70,7 +70,8 @@
             android:layout_height="wrap_content"
             android:text="@string/radioAktuell"
             android:id="@+id/radioAktuell"
-            android:onClick="onRadioButtonClicked"/>
+            android:onClick="onRadioButtonClicked"
+            android:checked="true"/>
 
         <RadioButton
             android:layout_width="wrap_content"
@@ -106,7 +107,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/kartenButton"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:id="@+id/ebenenOption"
         android:visibility="invisible">
 

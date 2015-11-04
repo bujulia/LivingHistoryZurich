@@ -13,7 +13,7 @@
         android:text="@string/buttonBack"
         android:id="@+id/backButton"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentRight="true" />
 
     <ImageButton
         android:layout_width="100dp"
