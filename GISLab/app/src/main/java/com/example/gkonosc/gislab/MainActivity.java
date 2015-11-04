@@ -1,6 +1,7 @@
 package com.example.gkonosc.gislab;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +24,10 @@ import com.esri.android.map.MapView;
 import com.esri.android.map.ags.ArcGISFeatureLayer;
 import com.esri.android.map.event.OnStatusChangedListener;
 import com.esri.android.map.ogc.WMSLayer;
+import com.esri.core.map.CallbackListener;
+import com.esri.core.tasks.identify.IdentifyParameters;
+import com.esri.core.tasks.identify.IdentifyResult;
+import com.esri.core.tasks.identify.IdentifyTask;
 
 public class MainActivity extends Activity {
 
@@ -56,6 +61,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         // after the content of this activity is set
         // the map can be accessed from the layout
         mMapView = (MapView)findViewById(R.id.map);
@@ -87,6 +93,7 @@ public class MainActivity extends Activity {
 
 
         //************************************** Autocomplete ***********************************//
+
         // get the defined string-array
         final String[] colors = getResources().getStringArray(R.array.colorList);
         adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,colors);
@@ -99,9 +106,36 @@ public class MainActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // onObjectZoom();   <-- Define a function that is called when the user clicks on an item from the dropdown
-                String colorMessage= colors[position];
+                String colorMessage = colors[position];
                 Toast toast = Toast.makeText(getApplicationContext(), colorMessage, Toast.LENGTH_SHORT);
                 toast.show();
+            }
+        });
+
+        // Trying something with identify, not working
+        mFeatureServiceURL = this.getResources().getString(R.string.URL_Garten);
+        mFeatureLayer = new ArcGISFeatureLayer(mFeatureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND);
+
+        IdentifyTask identifyTask = new IdentifyTask(mFeatureServiceURL);
+        IdentifyParameters identifyparam = new IdentifyParameters();
+        identifyparam.setTolerance(10);
+
+        identifyTask.execute(identifyparam, new CallbackListener<IdentifyResult[]>() {
+
+            @Override
+            public void onError(Throwable e) {
+                // handle/display error as desired
+            }
+
+            @Override
+            public void onCallback(IdentifyResult[] identifyResults) {
+                // go through the returned result array
+                for (int i = 0; i < identifyResults.length; i++) {
+                    IdentifyResult result = identifyResults[i];
+                    String resultString =
+                            result.getAttributes().get(result.getDisplayFieldName())
+                                    + " (" + result.getLayerName() + ")";
+                }
             }
         });
         //************************************** Autocomplete ***********************************//
@@ -225,31 +259,66 @@ public class MainActivity extends Activity {
         switch (view.getId()) {
             //Click box for Denkmalpflege of today
             case R.id.checkDenkm:
-                if (checked)
+                if (checked){
                     Log.d("StartMenu", "Denk pa");
-                else
+                    onLayerSelected("Denkm");
+                    }
+                else{
                     Log.d("StartMenu", "Denk av");
+                    onLayerDeselected();}
                 break;
 
             //Click box for Denkmalpflege of today
             case R.id.checkGarten:
-                if (checked)
+                if (checked){
                     Log.d("StartMenu", "Garten");
-                else
+                    onLayerSelected("Garten");}
+                else{
                     Log.d("StartMenu", "Garten av");
+                    onLayerDeselected();}
                 break;
 
             //Radio button for the basemap of 1900
             case R.id.checkAussicht:
-                if (checked)
+                if (checked){
                     Log.d("StartMenu", "aussicht");
-                else
+                    onLayerSelected("Aussicht");}
+                else{
                     Log.d("StartMenu", "aussicht av");
+                    onLayerDeselected();}
                 break;
 
         }
     }
 
+    // method used to set a selected layer visible
+    public void onLayerSelected(String layerName){
+        String layerURL = "URL_"+layerName; //this is how the layerURL looks like in the strings.xml
+        int identifier = getStringIdentifier(this, layerURL); //create an identifier to access the string from strings.xml with getString()
+        mFeatureServiceURL = this.getResources().getString(identifier);
+        // Add Feature layer to the MapView
+        mFeatureLayer=createFeatureLayer(mFeatureServiceURL);
+        mMapView.addLayer(mFeatureLayer);
+        // Add Graphics layer to the MapView
+        mGraphicsLayer = new GraphicsLayer();
+        mMapView.addLayer(mGraphicsLayer);
+    }
+
+    // method used to remove a layer which isn't selected <-- needs to be defined properly is not working yet!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public void onLayerDeselected(){
+        mMapView.removeLayer(mGraphicsLayer);
+    }
+
+    // method to create a StringIdentifier to access the strings.xml file
+    public static int getStringIdentifier(Context context, String name) {
+        return context.getResources().getIdentifier(name, "string", context.getPackageName());
+    }
+
+    // method to get create a FeatureLayer
+    public ArcGISFeatureLayer createFeatureLayer(String featureServiceURL){
+        mFeatureLayer = new ArcGISFeatureLayer(mFeatureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND);
+        return mFeatureLayer;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -277,7 +346,7 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == selectedTour) {
         // Get the feature service URL from values->strings.xml
-        mFeatureServiceURL = this.getResources().getString(R.string.featureServiceURL);
+        mFeatureServiceURL = this.getResources().getString(R.string.URL_tour01_stops);
         // Add Feature layer to the MapView
         mFeatureLayer = new ArcGISFeatureLayer(mFeatureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND);
         mMapView.addLayer(mFeatureLayer);

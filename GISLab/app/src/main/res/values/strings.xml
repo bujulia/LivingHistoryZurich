@@ -31,8 +31,11 @@
 
     <string name="title_activity_touren_menu">Touren</string>
 
-    <string name="featureServiceURL">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/Tour01/FeatureServer/2</string>
-    <string name="GartendenkmalURL">http://www.gis.stadt-zuerich.ch/maps/services/wms/WMS-ZH-STZH-OGD/MapServer/WFSServer</string>
+    <string name="URL_tour01_stops">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/Tour01/FeatureServer/2</string>
+    <string name="URL_tour01_route">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/Tour01/FeatureServer/3</string>
+    <string name="URL_Garten">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/OGD_data/FeatureServer/2</string>
+    <string name="URL_Denkm">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/OGD_data/FeatureServer/0</string>
+    <string name="URL_Aussicht">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/OGD_data/FeatureServer/1</string>
 
     <string-array name="colorList">
         <item >Black</item>
@@ -60,5 +63,7 @@
         <item>Bäuerliche Umgebung</item>
         <item>-</item>
     </string-array>
+
+
 
 </resources>
