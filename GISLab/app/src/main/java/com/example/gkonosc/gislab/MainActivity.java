@@ -170,7 +170,7 @@ public class MainActivity extends Activity {
         });
     }
 
-    //Opens or closes the list of possible karten options
+    //Opens or closes the list of possible Karten options
     private void triggerKartenButtonAction(){
         if (kartenOption.getVisibility() == View.VISIBLE){
             kartenOption.setVisibility(View.GONE);
@@ -181,7 +181,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    //Opens or closes the list of possible ebenen options
+    //Opens or closes the list of possible Ebenen options
     private void triggerEbenenButtonAction(){
         if (ebenenOption.getVisibility() == View.VISIBLE){
             ebenenOption.setVisibility(View.GONE);
@@ -217,25 +217,25 @@ public class MainActivity extends Activity {
                     visible = "Uebersichtsplan";
                     break;
 
-                //Radio button for the basemap of 1970
+            //Radio button for the basemap of 1970
             case R.id.radio1970:
                 if (checked)
                     visible = "Uebersichtsplan_1970";
                     break;
 
-                //Radio button for the basemap of 1900
+            //Radio button for the basemap of 1900
             case R.id.radio1900:
                 if (checked)
                     visible = "Stadtplan_1900";
                     break;
 
-                //Radio button for the basemap of 1860
+            //Radio button for the basemap of 1860
             case R.id.radio1860:
                 if (checked)
                     visible = "Stadtplan_1860";
                     break;
 
-                //Radio button for the basemap of 1793
+            //Radio button for the basemap of 1793
             case R.id.radio1793:
                 if (checked)
                     visible = "Stadtplan_1793";
@@ -260,31 +260,28 @@ public class MainActivity extends Activity {
             //Click box for Denkmalpflege of today
             case R.id.checkDenkm:
                 if (checked){
-                    Log.d("StartMenu", "Denk pa");
                     onLayerSelected("Denkm");
                     }
                 else{
-                    Log.d("StartMenu", "Denk av");
+                    Log.d("StartMenu", "denkm off");
                     onLayerDeselected();}
                 break;
 
             //Click box for Denkmalpflege of today
             case R.id.checkGarten:
                 if (checked){
-                    Log.d("StartMenu", "Garten");
                     onLayerSelected("Garten");}
                 else{
-                    Log.d("StartMenu", "Garten av");
+                    Log.d("StartMenu", "garten off");
                     onLayerDeselected();}
                 break;
 
-            //Radio button for the basemap of 1900
+            //Click box for Aussicht of today
             case R.id.checkAussicht:
                 if (checked){
-                    Log.d("StartMenu", "aussicht");
                     onLayerSelected("Aussicht");}
                 else{
-                    Log.d("StartMenu", "aussicht av");
+                    Log.d("StartMenu", "aussicht off");
                     onLayerDeselected();}
                 break;
 
