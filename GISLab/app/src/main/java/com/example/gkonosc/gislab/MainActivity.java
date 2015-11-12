@@ -3,7 +3,12 @@ package com.example.gkonosc.gislab;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,14 +29,28 @@ import com.esri.android.map.MapView;
 import com.esri.android.map.ags.ArcGISFeatureLayer;
 import com.esri.android.map.event.OnStatusChangedListener;
 import com.esri.android.map.ogc.WMSLayer;
+import com.esri.core.geometry.CoordinateConversion;
+import com.esri.core.geometry.Geometry;
+import com.esri.core.geometry.GeometryEngine;
+import com.esri.core.geometry.Point;
+import com.esri.core.geometry.SpatialReference;
 import com.esri.core.map.CallbackListener;
+import com.esri.core.map.Graphic;
+import com.esri.core.symbol.MarkerSymbol;
+import com.esri.core.symbol.SimpleLineSymbol;
+import com.esri.core.symbol.SimpleMarkerSymbol;
+import com.esri.core.symbol.Symbol;
 import com.esri.core.tasks.identify.IdentifyParameters;
 import com.esri.core.tasks.identify.IdentifyResult;
 import com.esri.core.tasks.identify.IdentifyTask;
+import com.esri.core.tasks.na.NAFeaturesAsFeature;
+import com.esri.core.tasks.na.StopGraphic;
 
-public class MainActivity extends Activity {
+import java.util.Timer;
 
-    //charis
+
+public class MainActivity extends Activity implements LocationListener{
+
     MapView mMapView;
     public ArcGISFeatureLayer mFeatureLayer;
     GraphicsLayer mGraphicsLayer;
@@ -55,16 +74,21 @@ public class MainActivity extends Activity {
     private AutoCompleteTextView autoComplete;
     private ArrayAdapter<String> adapter;
 
+    private LocationManager locationManager;
+    public Location currentLocation;
+    public GraphicsLayer graphicsLayer = new GraphicsLayer();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         // after the content of this activity is set
         // the map can be accessed from the layout
         mMapView = (MapView)findViewById(R.id.map);
+
+        mMapView.addLayer(graphicsLayer);
 
         // set up the wms url
         wmsURL = "http://www.gis.stadt-zuerich.ch/maps/services/wms/WMS-ZH-STZH-OGD/MapServer/WMSServer";
@@ -90,6 +114,18 @@ public class MainActivity extends Activity {
         tourenButton = (Button) findViewById(R.id.tourenButton);
         kartenOption = (RadioGroup) findViewById(R.id.kartenOption);
         ebenenOption = (LinearLayout) findViewById(R.id.ebenenOption);
+
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 5, this);
+        currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        //Point pointGeometry = new Point(-302557, 7570663);
+        //Point pointGeometry2 = new Point (currentLocation.getLongitude(), currentLocation.getLatitude());
+        Point myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
+
+        //Point pointGeometry4 = CoordinateConversion.decimalDegreesToPoint(String.valueOf(pointGeometry2), SpatialReference.create(SpatialReference.WKID_WGS84_WEB_MERCATOR));
+
+        graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.RED,10, SimpleMarkerSymbol.STYLE.CIRCLE)));
 
 
         //************************************** Autocomplete ***********************************//
@@ -250,7 +286,7 @@ public class MainActivity extends Activity {
         wmsLayer.setVisibleLayer(newVisibleLayer);
         mMapView.addLayer(wmsLayer);
         mMapView.removeLayer(oldWMS);
-        ;}
+    }
 
     //Responds when a click box is clicked, showing the different layers
     public void onCheckBoxClicked(View view) {
@@ -353,5 +389,32 @@ public class MainActivity extends Activity {
         }
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+
+        currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        graphicsLayer.removeAll();
+
+        Point myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
+
+        graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.RED,10, SimpleMarkerSymbol.STYLE.CIRCLE)));
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
 }
 
