@@ -57,12 +57,11 @@
         android:background="@android:color/transparent"/>
 
     <RadioGroup
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id = "@+id/kartenOption"
         android:layout_above="@+id/kartenButton"
-        android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/ebenenButton"
+        android:background="#ffe5dede"
         android:visibility="invisible">
 
         <RadioButton
@@ -104,11 +103,11 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/kartenButton"
-        android:layout_alignParentLeft="true"
         android:id="@+id/ebenenOption"
+        android:background="#ffe5dede"
         android:visibility="invisible">
 
         <CheckBox

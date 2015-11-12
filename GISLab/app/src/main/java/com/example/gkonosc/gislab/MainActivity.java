@@ -88,7 +88,7 @@ public class MainActivity extends Activity implements LocationListener{
         // the map can be accessed from the layout
         mMapView = (MapView)findViewById(R.id.map);
 
-        mMapView.addLayer(graphicsLayer);
+
 
         // set up the wms url
         wmsURL = "http://www.gis.stadt-zuerich.ch/maps/services/wms/WMS-ZH-STZH-OGD/MapServer/WMSServer";
@@ -98,6 +98,9 @@ public class MainActivity extends Activity implements LocationListener{
         String[] visibleLayers = {"Uebersichtsplan"};
         wmsLayer.setVisibleLayer(visibleLayers);
         mMapView.addLayer(wmsLayer);
+
+
+        mMapView.addLayer(graphicsLayer);
 
         mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
             public void onStatusChanged(Object source, STATUS status) {
@@ -119,11 +122,7 @@ public class MainActivity extends Activity implements LocationListener{
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 5, this);
         currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        //Point pointGeometry = new Point(-302557, 7570663);
-        //Point pointGeometry2 = new Point (currentLocation.getLongitude(), currentLocation.getLatitude());
         Point myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
-
-        //Point pointGeometry4 = CoordinateConversion.decimalDegreesToPoint(String.valueOf(pointGeometry2), SpatialReference.create(SpatialReference.WKID_WGS84_WEB_MERCATOR));
 
         graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.RED,10, SimpleMarkerSymbol.STYLE.CIRCLE)));
 
@@ -285,6 +284,7 @@ public class MainActivity extends Activity implements LocationListener{
         String[] newVisibleLayer = {visible};
         wmsLayer.setVisibleLayer(newVisibleLayer);
         mMapView.addLayer(wmsLayer);
+        mMapView.addLayer(graphicsLayer);
         mMapView.removeLayer(oldWMS);
     }
 
@@ -335,11 +335,12 @@ public class MainActivity extends Activity implements LocationListener{
         // Add Graphics layer to the MapView
         mGraphicsLayer = new GraphicsLayer();
         mMapView.addLayer(mGraphicsLayer);
+        mMapView.addLayer(graphicsLayer);
     }
 
     // method used to remove a layer which isn't selected <-- needs to be defined properly is not working yet!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     public void onLayerDeselected(){
-        mMapView.removeLayer(mGraphicsLayer);
+        //mMapView.removeLayer(mGraphicsLayer);
     }
 
     // method to create a StringIdentifier to access the strings.xml file
@@ -386,6 +387,7 @@ public class MainActivity extends Activity implements LocationListener{
         // Add Graphics layer to the MapView
         mGraphicsLayer = new GraphicsLayer();
         mMapView.addLayer(mGraphicsLayer);
+        mMapView.addLayer(graphicsLayer);
         }
     }
 
