@@ -141,12 +141,13 @@ public class MainActivity extends Activity implements LocationListener{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // onObjectZoom();   <-- Define a function that is called when the user clicks on an item from the dropdown
-                String colorMessage = colors[position];
-                Toast toast = Toast.makeText(getApplicationContext(), colorMessage, Toast.LENGTH_SHORT);
+                String itemString = parent.getItemAtPosition(position).toString();
+                Toast toast = Toast.makeText(getApplicationContext(), itemString, Toast.LENGTH_SHORT);
                 toast.show();
             }
         });
 
+        /*
         // Trying something with identify, not working
         mFeatureServiceURL = this.getResources().getString(R.string.URL_Garten);
         mFeatureLayer = new ArcGISFeatureLayer(mFeatureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND);
@@ -172,7 +173,7 @@ public class MainActivity extends Activity implements LocationListener{
                                     + " (" + result.getLayerName() + ")";
                 }
             }
-        });
+        }); */
         //************************************** Autocomplete ***********************************//
 
 
@@ -380,7 +381,7 @@ public class MainActivity extends Activity implements LocationListener{
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == selectedTour) {
         // Get the feature service URL from values->strings.xml
-        mFeatureServiceURL = this.getResources().getString(R.string.URL_tour01_stops);
+        mFeatureServiceURL = this.getResources().getString(R.string.URL_tour01_route);
         // Add Feature layer to the MapView
         mFeatureLayer = new ArcGISFeatureLayer(mFeatureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND);
         mMapView.addLayer(mFeatureLayer);
@@ -400,7 +401,7 @@ public class MainActivity extends Activity implements LocationListener{
 
         Point myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
 
-        graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.RED,10, SimpleMarkerSymbol.STYLE.CIRCLE)));
+        graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.BLUE,10, SimpleMarkerSymbol.STYLE.CIRCLE)));
 
     }
 

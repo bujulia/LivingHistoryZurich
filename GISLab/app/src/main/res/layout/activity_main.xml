@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:id = "@+id/kartenOption"
         android:layout_above="@+id/kartenButton"
-        android:background="#ffe5dede"
+        android:background="#ffeeeeee"
         android:visibility="invisible">
 
         <RadioButton
@@ -107,7 +107,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/kartenButton"
         android:id="@+id/ebenenOption"
-        android:background="#ffe5dede"
+        android:background="#ffeeeeee"
         android:visibility="invisible">
 
         <CheckBox
@@ -137,6 +137,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:text="Bezeichnung"
         android:ems="14" />
 
 </RelativeLayout>

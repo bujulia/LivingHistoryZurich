@@ -29,6 +29,9 @@
     <string name="buttonAnwenden">Anwenden</string>
     <string name="buttonBack">Zurück</string>
 
+    <string name="Tour_1_Description">Tour 1: Innenstadt \nDauer: 1.5h</string>
+    <string name="Tour_4_Description">Tour 4: Wiedikon \nDauer: 1.75h</string>
+
     <string name="title_activity_touren_menu">Touren</string>
 
     <string name="URL_tour01_stops">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/Tour01/FeatureServer/2</string>
