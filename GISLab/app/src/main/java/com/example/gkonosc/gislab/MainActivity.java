@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,7 +42,12 @@ import com.esri.core.map.Graphic;
 import com.esri.core.symbol.SimpleMarkerSymbol;
 import com.esri.core.tasks.ags.query.Query;
 import com.esri.core.tasks.ags.query.QueryTask;
+import com.esri.core.tasks.na.NAFeaturesAsFeature;
+import com.esri.core.tasks.na.StopGraphic;
 
+
+
+public class MainActivity extends Activity implements LocationListener{
 
 public class MainActivity extends Activity implements LocationListener{
 
@@ -62,7 +68,7 @@ public class MainActivity extends Activity implements LocationListener{
     private Button ebenenButton;
     private Button filterButton;
     private Button tourenButton;
-    private SearchView searchOption;
+    private Button stopTourButton;
     private RadioGroup kartenOption;
     private LinearLayout ebenenOption;
 
@@ -88,16 +94,9 @@ public class MainActivity extends Activity implements LocationListener{
         // the map can be accessed from the layout
         mMapView = (MapView)findViewById(R.id.map);
 
+        createWMSURL("Uebersichtsplan");
 
-
-        // set up the wms url
-        wmsURL = "http://www.gis.stadt-zuerich.ch/maps/services/wms/WMS-ZH-STZH-OGD/MapServer/WMSServer";
-        wmsLayer = new WMSLayer(wmsURL);
-        wmsLayer.setImageFormat("image/png");
-        // starting wms layer
-        String[] visibleLayers = {"Uebersichtsplan"};
-        wmsLayer.setVisibleLayer(visibleLayers);
-        mMapView.addLayer(wmsLayer);
+        mMapView.addLayer(graphicsLayer);
 
 
         mMapView.addLayer(graphicsLayer);
@@ -116,6 +115,7 @@ public class MainActivity extends Activity implements LocationListener{
         ebenenButton = (Button) findViewById(R.id.ebenenButton);
         filterButton = (Button) findViewById(R.id.filterButton);
         tourenButton = (Button) findViewById(R.id.tourenButton);
+        stopTourButton = (Button) findViewById(R.id.stopTourButton);
         kartenOption = (RadioGroup) findViewById(R.id.kartenOption);
         ebenenOption = (LinearLayout) findViewById(R.id.ebenenOption);
 
@@ -126,6 +126,12 @@ public class MainActivity extends Activity implements LocationListener{
         Point myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
 
         graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.BLUE,10, SimpleMarkerSymbol.STYLE.CIRCLE)));
+
+
+        Point myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
+
+        graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.BLUE,10, SimpleMarkerSymbol.STYLE.CIRCLE)));
+        /*
 
         //Define what kartenButton will do on a click
         kartenButton.setOnClickListener(new View.OnClickListener() {
@@ -152,6 +158,13 @@ public class MainActivity extends Activity implements LocationListener{
         tourenButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 triggerTourenButtonAction();
+            }
+        });
+
+        //Define what stopTourButton will do on a click
+        stopTourButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                triggerStopTourButtonAction();
             }
         });
     }
@@ -187,8 +200,14 @@ public class MainActivity extends Activity implements LocationListener{
     //Creates a new intent -> opens the touren menu
     private void triggerTourenButtonAction(){
         Intent myIntent = new Intent(getBaseContext(),tourenMenu.class);
-        myIntent.setAction(Intent.ACTION_VIEW);
+        //myIntent.setAction(Intent.ACTION_VIEW);
         startActivityForResult(myIntent, selectedTour);
+    }
+
+    //Removes the tour from the map, needs editing
+    private void triggerStopTourButtonAction(){
+        stopTourButton.setVisibility(View.INVISIBLE);
+        //call method that removes tour layer
     }
 
     //Responds when a radio button is clicked, showing a basemap for the year of choice
@@ -228,13 +247,7 @@ public class MainActivity extends Activity implements LocationListener{
                     break;
         }
 
-        // set up the wms url
-        wmsURL = "http://www.gis.stadt-zuerich.ch/maps/services/wms/WMS-ZH-STZH-OGD/MapServer/WMSServer";
-        wmsLayer = new WMSLayer(wmsURL);
-        wmsLayer.setImageFormat("image/png");
-        String[] newVisibleLayer = {visible};
-        wmsLayer.setVisibleLayer(newVisibleLayer);
-        mMapView.addLayer(wmsLayer);
+        createWMSURL(visible);
         mMapView.addLayer(graphicsLayer);
         mMapView.removeLayer(oldWMS);
     }
@@ -320,6 +333,7 @@ public class MainActivity extends Activity implements LocationListener{
         // Add Feature layer to the MapView
         mFeatureLayer=createFeatureLayer(mFeatureServiceURL);
         mMapView.addLayer(mFeatureLayer);
+        mMapView.addLayer(graphicsLayer);
     }
 
 
@@ -337,8 +351,20 @@ public class MainActivity extends Activity implements LocationListener{
 
     // method to get create a FeatureLayer
     public ArcGISFeatureLayer createFeatureLayer(String featureServiceURL){
-        mFeatureLayer = new ArcGISFeatureLayer(mFeatureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND);
+        mFeatureLayer = new ArcGISFeatureLayer(featureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND);
         return mFeatureLayer;
+    }
+
+    //Method to create the WMS URL
+    public void createWMSURL(String layer) {
+        //Sets the WMS layer
+        wmsURL = "http://www.gis.stadt-zuerich.ch/maps/services/wms/WMS-ZH-STZH-OGD/MapServer/WMSServer";
+        wmsLayer = new WMSLayer(wmsURL);
+        wmsLayer.setImageFormat("image/png");
+        //Starts the WMS layer
+        String[] visibleLayers = {layer};
+        wmsLayer.setVisibleLayer(visibleLayers);
+        mMapView.addLayer(wmsLayer);
     }
 
     @Override
@@ -364,17 +390,12 @@ public class MainActivity extends Activity implements LocationListener{
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == selectedTour) {
-        // Get the feature service URL from values->strings.xml
-        mFeatureServiceURL = this.getResources().getString(R.string.URL_tour01_route);
-        // Add Feature layer to the MapView
-        mFeatureLayer = new ArcGISFeatureLayer(mFeatureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND);
-        mMapView.addLayer(mFeatureLayer);
-        // Add Graphics layer to the MapView
-        mGraphicsLayer = new GraphicsLayer();
-        mMapView.addLayer(mGraphicsLayer);
-        mMapView.addLayer(graphicsLayer);
+            if (resultCode == RESULT_OK) {
+                stopTourButton.setVisibility(View.VISIBLE);
+                String myValue = data.getStringExtra("tour");
+                onLayerSelected(myValue);
+            }
         }
     }
 
@@ -388,6 +409,15 @@ public class MainActivity extends Activity implements LocationListener{
         Point myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
 
         graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.BLUE,10, SimpleMarkerSymbol.STYLE.CIRCLE)));
+
+        Point myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
+
+        graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.BLUE,10, SimpleMarkerSymbol.STYLE.CIRCLE)));
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
 
     }
 

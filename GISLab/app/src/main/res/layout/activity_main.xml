@@ -56,6 +56,17 @@
         android:drawableTop="@drawable/symbol_tours"
         android:background="@android:color/transparent"/>
 
+    <Button
+        android:text="Stop tour"
+        android:id="@+id/stopTourButton"
+        android:layout_width="40dip"
+        android:layout_height="40dip"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/autoComplete"
+        android:focusableInTouchMode="false"
+        android:background="@android:color/white"
+        android:visibility="invisible"/>
+
     <RadioGroup
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
