@@ -77,7 +77,7 @@ public class filterMenu extends Activity {
             try {
                 Integer distInt = Integer.valueOf(distString);
                 if (distInt < 1){
-                    ad.setMessage("Distanz muss grösser als 1 Meter sein");
+                    ad.setMessage("Distanz muss grosser als 1 Meter sein");
                     ad.show();
                 }
                 else{
@@ -106,7 +106,7 @@ public class filterMenu extends Activity {
                     Integer startInt = 1000;
                     Integer endInt = Integer.valueOf(endString);
                     if (endInt < 0){
-                        ad.setMessage("Jahr muss grösser als 0 Jahr sein");
+                        ad.setMessage("Jahr muss grosser als 0 Jahr sein");
                         ad.show();
                     }
                     else{
@@ -123,7 +123,7 @@ public class filterMenu extends Activity {
                     Integer startInt = Integer.valueOf(startString);
                     Integer endInt = 2015;
                     if (startInt < 0){
-                        ad.setMessage("Jahr muss grösser als 0 Jahr sein");
+                        ad.setMessage("Jahr muss grosser als 0 Jahr sein");
                         ad.show();
                     }
                     else{
@@ -139,7 +139,7 @@ public class filterMenu extends Activity {
                     Integer startInt = Integer.valueOf(startString);
                     Integer endInt = Integer.valueOf(endString);
                     if (startInt < 0 || endInt < 0){
-                        ad.setMessage("Jahr muss grösser als 0 Jahr sein");
+                        ad.setMessage("Jahr muss grosser als 0 Jahr sein");
                         ad.show();
                     }
                     else{
