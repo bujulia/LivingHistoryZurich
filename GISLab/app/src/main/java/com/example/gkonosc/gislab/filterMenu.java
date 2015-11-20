@@ -48,8 +48,7 @@ public class filterMenu extends Activity {
 
         //Define what zuruckButton will do on a click
         zuruckButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            public void onClick(View v) {
+                public void onClick(View v) {
                 triggerZuruckButtonAction();
             }
         });

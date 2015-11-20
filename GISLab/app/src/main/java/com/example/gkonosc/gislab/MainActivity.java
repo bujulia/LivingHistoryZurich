@@ -8,7 +8,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,7 +19,6 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.SearchView;
 
 import com.esri.android.map.GraphicsLayer;
 import com.esri.android.map.MapView;
@@ -42,14 +40,11 @@ import com.esri.core.map.Graphic;
 import com.esri.core.symbol.SimpleMarkerSymbol;
 import com.esri.core.tasks.ags.query.Query;
 import com.esri.core.tasks.ags.query.QueryTask;
-import com.esri.core.tasks.na.NAFeaturesAsFeature;
-import com.esri.core.tasks.na.StopGraphic;
 
 
 
 public class MainActivity extends Activity implements LocationListener{
 
-public class MainActivity extends Activity implements LocationListener{
 
     MapView mMapView;
     public ArcGISFeatureLayer mFeatureLayer;
@@ -123,15 +118,11 @@ public class MainActivity extends Activity implements LocationListener{
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 5, this);
         currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        Point myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
-
-        graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.BLUE,10, SimpleMarkerSymbol.STYLE.CIRCLE)));
-
 
         Point myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
 
         graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.BLUE,10, SimpleMarkerSymbol.STYLE.CIRCLE)));
-        /*
+
 
         //Define what kartenButton will do on a click
         kartenButton.setOnClickListener(new View.OnClickListener() {
@@ -333,11 +324,7 @@ public class MainActivity extends Activity implements LocationListener{
         // Add Feature layer to the MapView
         mFeatureLayer=createFeatureLayer(mFeatureServiceURL);
         mMapView.addLayer(mFeatureLayer);
-        mMapView.addLayer(graphicsLayer);
     }
-
-
-
 
     // method used to remove a layer which isn't selected <-- needs to be defined properly is not working yet!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     public void onLayerDeselected(){
@@ -410,10 +397,6 @@ public class MainActivity extends Activity implements LocationListener{
 
         graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.BLUE,10, SimpleMarkerSymbol.STYLE.CIRCLE)));
 
-        Point myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
-
-        graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.BLUE,10, SimpleMarkerSymbol.STYLE.CIRCLE)));
-
     }
 
     @Override
@@ -421,10 +404,7 @@ public class MainActivity extends Activity implements LocationListener{
 
     }
 
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
 
-    }
 
     @Override
     public void onProviderEnabled(String provider) {
