@@ -16,12 +16,40 @@
         android:layout_alignParentRight="true" />
 
     <ImageButton
-        android:layout_width="100dp"
+        android:layout_width="142dp"
         android:layout_height="100dp"
         android:id="@+id/imageButton"
+        android:src="@drawable/symbol_01_innenstadt"
         android:layout_marginTop="30dp"
         android:layout_below="@+id/backButton"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <ImageButton
+        android:layout_width="142dp"
+        android:layout_height="100dp"
+        android:id="@+id/imageButton2"
+        android:src="@drawable/symbol_04_wiedikon"
+        android:layout_marginTop="35dp"
+        android:layout_below="@+id/imageButton"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/Tour_1_Description"
+        android:id="@+id/textView"
+        android:layout_alignBottom="@+id/imageButton"
+        android:layout_alignEnd="@+id/backButton" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/Tour_4_Description"
+        android:id="@+id/textView2"
+        android:layout_alignBottom="@+id/imageButton2"
+        android:layout_alignStart="@+id/textView" />
 
 </RelativeLayout>

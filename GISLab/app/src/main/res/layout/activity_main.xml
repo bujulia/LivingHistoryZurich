@@ -12,7 +12,7 @@
         android:layout_height="fill_parent"
         mapoptions.MapType="Topo"
         mapoptions.center="47.38, 8.54"
-        mapoptions.ZoomLevel="15"
+        mapoptions.ZoomLevel="17"
         android:layout_above="@+id/kartenButton" />
 
     <Button
@@ -57,12 +57,11 @@
         android:background="@android:color/transparent"/>
 
     <RadioGroup
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id = "@+id/kartenOption"
         android:layout_above="@+id/kartenButton"
-        android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/ebenenButton"
+        android:background="#ffeeeeee"
         android:visibility="invisible">
 
         <RadioButton
@@ -104,11 +103,11 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/kartenButton"
-        android:layout_alignParentLeft="true"
         android:id="@+id/ebenenOption"
+        android:background="#ffeeeeee"
         android:visibility="invisible">
 
         <CheckBox
@@ -133,11 +132,13 @@
             android:onClick="onCheckBoxClicked"/>
     </LinearLayout>
 
+
     <AutoCompleteTextView
         android:id="@+id/autoComplete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:hint="Bezeichnung"
         android:ems="14" />
 
 </RelativeLayout>

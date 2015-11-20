@@ -48,31 +48,122 @@ public class filterMenu extends Activity {
 
         //Define what zuruckButton will do on a click
         zuruckButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {triggerZuruckButtonAction(); }
+            public void onClick(View v) {
+                triggerZuruckButtonAction();
+            }
         });
     }
 
     //To be defined...
     private void triggerAnwendenButtonAction(){
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        AlertDialog ad = adb.create();
 
-        //Read the content from the EditText elements
-        String distString = distInput.getText().toString();
-        String startString = startInput.getText().toString();
-        String endString = endInput.getText().toString();
+        distanceInput(ad);
+        yearInput(ad);
 
-        //Tries to convert the content to integers
-        try {
-            Integer distInt = Integer.valueOf(distString);
-            Integer startInt = Integer.valueOf(startString);
-            Integer endInt = Integer.valueOf(endString);
-        }catch (Exception e){
-            AlertDialog ad = adb.create();
-            ad.setMessage("Bitte geben Sie Zahlen, nicht Buchstaben");
-            ad.show();
-        }
     }
 
+    //Retrieves the search distance and tries to catches exceptions
+    private void distanceInput(AlertDialog ad) {
+        //Reads the content from the EditText elements
+        String distString = distInput.getText().toString();
+        //Checks if the distance is an empty string, if yes nothing is done
+        if (distString.matches("")) {
+            //Ignore
+        }
+        else{
+            //Tries to convert the distance to integers and checks if the distance if more than 1 meter
+            try {
+                Integer distInt = Integer.valueOf(distString);
+                if (distInt < 1){
+                    ad.setMessage(getResources().getString(R.string.distanz_groesser));
+                    ad.show();
+                }
+                else{
+                    filterDistance(distInt);
+                }
+            } catch (Exception e) {
+                ad.setMessage(getResources().getString(R.string.zahlen_angeben));
+                ad.show();
+            }
+        }
+    };
+
+    //Retrieves the years and tries to catches exceptions
+    //Can be improved so it won't be that much of code repetition...
+    private void yearInput(AlertDialog ad){
+        String startString = startInput.getText().toString();
+        String endString = endInput.getText().toString();
+        //Checks if the start year and the end year are empty strings, if yes nothing is done
+        if (startString.matches("") && endString.matches("")) {
+            //Ignore
+        }
+        else {
+            //Checks if the start year if an empty string, if yes the start year is set to the year 1000
+            if (startString.matches("")) {
+                try {
+                    Integer startInt = 1000;
+                    Integer endInt = Integer.valueOf(endString);
+                    if (endInt < 0){
+                        ad.setMessage(getResources().getString(R.string.jahr_groesser));
+                        ad.show();
+                    }
+                    else{
+                        filterYears(startInt,endInt);
+                    }
+                } catch (Exception e) {
+                    ad.setMessage(getResources().getString(R.string.zahlen_angeben));
+                    ad.show();
+                }
+            }
+            //Checks if the end year if an empty string, if yes the end year is set to the year 2015
+            else if (endString.matches("")) {
+                try {
+                    Integer startInt = Integer.valueOf(startString);
+                    Integer endInt = 2015;
+                    if (startInt < 0){
+                        ad.setMessage(getResources().getString(R.string.jahr_groesser));
+                        ad.show();
+                    }
+                    else{
+                        filterYears(startInt,endInt);
+                    }
+                } catch (Exception e) {
+                    ad.setMessage(getResources().getString(R.string.zahlen_angeben));
+                    ad.show();
+                }
+            }
+            else {
+                try {
+                    Integer startInt = Integer.valueOf(startString);
+                    Integer endInt = Integer.valueOf(endString);
+                    if (startInt < 0 || endInt < 0){
+                        ad.setMessage(getResources().getString(R.string.jahr_groesser));
+                        ad.show();
+                    }
+                    else{
+                        filterYears(startInt,endInt);
+                    }
+                } catch (Exception e) {
+                    ad.setMessage(getResources().getString(R.string.zahlen_angeben));
+                    ad.show();
+                }
+            }
+        }
+    };
+
+    //Filters the distance for the layers
+    private void filterDistance(Integer distance){
+        //To be fixed
+        //this.finish();
+    }
+
+    //Filters Denkmalobjekte layer with the year
+    private void filterYears(Integer start, Integer end){
+        //To be fixed
+        //this.finish();
+    }
     //Finishing the activity
     private void triggerZuruckButtonAction(){
         this.finish();

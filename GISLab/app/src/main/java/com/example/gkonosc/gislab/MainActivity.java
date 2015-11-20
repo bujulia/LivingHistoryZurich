@@ -3,12 +3,15 @@ package com.example.gkonosc.gislab;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -17,26 +20,37 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import com.esri.android.map.GraphicsLayer;
 import com.esri.android.map.MapView;
 import com.esri.android.map.ags.ArcGISFeatureLayer;
+import com.esri.android.map.ags.ArcGISLayerInfo;
+import com.esri.android.map.ags.ArcGISPopupInfo;
+import com.esri.android.map.ags.ArcGISTiledMapServiceLayer;
 import com.esri.android.map.event.OnStatusChangedListener;
 import com.esri.android.map.ogc.WMSLayer;
-import com.esri.core.map.CallbackListener;
-import com.esri.core.tasks.identify.IdentifyParameters;
-import com.esri.core.tasks.identify.IdentifyResult;
-import com.esri.core.tasks.identify.IdentifyTask;
+import com.esri.android.map.popup.Popup;
+import com.esri.android.map.popup.PopupContainer;
+import com.esri.android.toolkit.map.MapViewHelper;
+import com.esri.core.geometry.Envelope;
+import com.esri.core.geometry.GeometryEngine;
+import com.esri.core.geometry.Point;
+import com.esri.core.geometry.SpatialReference;
+import com.esri.core.map.FeatureSet;
+import com.esri.core.map.Graphic;
+import com.esri.core.symbol.SimpleMarkerSymbol;
+import com.esri.core.tasks.ags.query.Query;
+import com.esri.core.tasks.ags.query.QueryTask;
 
-public class MainActivity extends Activity {
 
-    //charis
+public class MainActivity extends Activity implements LocationListener{
+
     MapView mMapView;
     public ArcGISFeatureLayer mFeatureLayer;
     GraphicsLayer mGraphicsLayer;
     boolean mIsMapLoaded;
     String mFeatureServiceURL;
+    String mMapServiceURL;
     WMSLayer wmsLayer;
     String wmsURL;
     public String visible;
@@ -55,16 +69,26 @@ public class MainActivity extends Activity {
     private AutoCompleteTextView autoComplete;
     private ArrayAdapter<String> adapter;
 
+    private LocationManager locationManager;
+    public Location currentLocation;
+    public GraphicsLayer graphicsLayer = new GraphicsLayer();
+
+    public static int WKID_WGS84;
+
+    private MapViewHelper mMapViewHelper;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         // after the content of this activity is set
         // the map can be accessed from the layout
         mMapView = (MapView)findViewById(R.id.map);
+
+
 
         // set up the wms url
         wmsURL = "http://www.gis.stadt-zuerich.ch/maps/services/wms/WMS-ZH-STZH-OGD/MapServer/WMSServer";
@@ -75,10 +99,14 @@ public class MainActivity extends Activity {
         wmsLayer.setVisibleLayer(visibleLayers);
         mMapView.addLayer(wmsLayer);
 
+
+        mMapView.addLayer(graphicsLayer);
+
         mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
             public void onStatusChanged(Object source, STATUS status) {
                 if ((source == mMapView) && (status == OnStatusChangedListener.STATUS.INITIALIZED)) {
                     mIsMapLoaded = true;
+                    mMapViewHelper = new MapViewHelper(mMapView);
                 }
             }
         });
@@ -91,55 +119,13 @@ public class MainActivity extends Activity {
         kartenOption = (RadioGroup) findViewById(R.id.kartenOption);
         ebenenOption = (LinearLayout) findViewById(R.id.ebenenOption);
 
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 5, this);
+        currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        //************************************** Autocomplete ***********************************//
+        Point myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
 
-        // get the defined string-array
-        final String[] colors = getResources().getStringArray(R.array.colorList);
-        adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,colors);
-        autoComplete = (AutoCompleteTextView) findViewById(R.id.autoComplete);
-        // set adapter for the auto complete fields
-        autoComplete.setAdapter(adapter);
-        // specify the minimum type of characters before drop-down list is shown
-        autoComplete.setThreshold(1);
-        autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // onObjectZoom();   <-- Define a function that is called when the user clicks on an item from the dropdown
-                String colorMessage = colors[position];
-                Toast toast = Toast.makeText(getApplicationContext(), colorMessage, Toast.LENGTH_SHORT);
-                toast.show();
-            }
-        });
-
-        // Trying something with identify, not working
-        mFeatureServiceURL = this.getResources().getString(R.string.URL_Garten);
-        mFeatureLayer = new ArcGISFeatureLayer(mFeatureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND);
-
-        IdentifyTask identifyTask = new IdentifyTask(mFeatureServiceURL);
-        IdentifyParameters identifyparam = new IdentifyParameters();
-        identifyparam.setTolerance(10);
-
-        identifyTask.execute(identifyparam, new CallbackListener<IdentifyResult[]>() {
-
-            @Override
-            public void onError(Throwable e) {
-                // handle/display error as desired
-            }
-
-            @Override
-            public void onCallback(IdentifyResult[] identifyResults) {
-                // go through the returned result array
-                for (int i = 0; i < identifyResults.length; i++) {
-                    IdentifyResult result = identifyResults[i];
-                    String resultString =
-                            result.getAttributes().get(result.getDisplayFieldName())
-                                    + " (" + result.getLayerName() + ")";
-                }
-            }
-        });
-        //************************************** Autocomplete ***********************************//
-
+        graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.BLUE,10, SimpleMarkerSymbol.STYLE.CIRCLE)));
 
         //Define what kartenButton will do on a click
         kartenButton.setOnClickListener(new View.OnClickListener() {
@@ -170,7 +156,7 @@ public class MainActivity extends Activity {
         });
     }
 
-    //Opens or closes the list of possible karten options
+    //Opens or closes the list of possible Karten options
     private void triggerKartenButtonAction(){
         if (kartenOption.getVisibility() == View.VISIBLE){
             kartenOption.setVisibility(View.GONE);
@@ -181,7 +167,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    //Opens or closes the list of possible ebenen options
+    //Opens or closes the list of possible Ebenen options
     private void triggerEbenenButtonAction(){
         if (ebenenOption.getVisibility() == View.VISIBLE){
             ebenenOption.setVisibility(View.GONE);
@@ -217,25 +203,25 @@ public class MainActivity extends Activity {
                     visible = "Uebersichtsplan";
                     break;
 
-                //Radio button for the basemap of 1970
+            //Radio button for the basemap of 1970
             case R.id.radio1970:
                 if (checked)
                     visible = "Uebersichtsplan_1970";
                     break;
 
-                //Radio button for the basemap of 1900
+            //Radio button for the basemap of 1900
             case R.id.radio1900:
                 if (checked)
                     visible = "Stadtplan_1900";
                     break;
 
-                //Radio button for the basemap of 1860
+            //Radio button for the basemap of 1860
             case R.id.radio1860:
                 if (checked)
                     visible = "Stadtplan_1860";
                     break;
 
-                //Radio button for the basemap of 1793
+            //Radio button for the basemap of 1793
             case R.id.radio1793:
                 if (checked)
                     visible = "Stadtplan_1793";
@@ -249,8 +235,9 @@ public class MainActivity extends Activity {
         String[] newVisibleLayer = {visible};
         wmsLayer.setVisibleLayer(newVisibleLayer);
         mMapView.addLayer(wmsLayer);
+        mMapView.addLayer(graphicsLayer);
         mMapView.removeLayer(oldWMS);
-        ;}
+    }
 
     //Responds when a click box is clicked, showing the different layers
     public void onCheckBoxClicked(View view) {
@@ -260,53 +247,87 @@ public class MainActivity extends Activity {
             //Click box for Denkmalpflege of today
             case R.id.checkDenkm:
                 if (checked){
-                    Log.d("StartMenu", "Denk pa");
                     onLayerSelected("Denkm");
                     }
                 else{
-                    Log.d("StartMenu", "Denk av");
+                    Log.d("StartMenu", "denkm off");
                     onLayerDeselected();}
                 break;
 
             //Click box for Denkmalpflege of today
             case R.id.checkGarten:
-                if (checked){
-                    Log.d("StartMenu", "Garten");
+                if (checked) {
                     onLayerSelected("Garten");}
                 else{
-                    Log.d("StartMenu", "Garten av");
+                    Log.d("StartMenu", "garten off");
                     onLayerDeselected();}
                 break;
 
-            //Radio button for the basemap of 1900
+            //Click box for Aussicht of today
             case R.id.checkAussicht:
                 if (checked){
-                    Log.d("StartMenu", "aussicht");
                     onLayerSelected("Aussicht");}
                 else{
-                    Log.d("StartMenu", "aussicht av");
+                    Log.d("StartMenu", "aussicht off");
                     onLayerDeselected();}
                 break;
 
         }
     }
 
+    public void onLayerSelected2(String layerName){
+        ArcGISTiledMapServiceLayer tiledLayer = new ArcGISTiledMapServiceLayer("http://tiles.arcgis.com/tiles/i9MtZ1vtgD3gTnyL/arcgis/rest/services/OGD_data/MapServer");
+        mMapView.addLayer(tiledLayer);
+
+        //********************************** popup part *************************************
+        PopupContainer popupContainer = new PopupContainer(mMapView);
+        Envelope env = tiledLayer.getFullExtent();
+        ArcGISLayerInfo layerInfo = new ArcGISLayerInfo();
+        SpatialReference sr = SpatialReference.create(WKID_WGS84);
+        Popup popup;
+        layerInfo.getLayers();
+
+        int layerID=layerInfo.getId();
+        String layerUrl = tiledLayer.getQueryUrl(layerID);
+        if (layerUrl == null)
+            layerUrl = tiledLayer.getUrl() + "/" + layerID;
+        ArcGISPopupInfo popupInfo = tiledLayer.getPopupInfo(layerID);
+        Query query = new Query();
+        query.setInSpatialReference(sr);
+        query.setOutSpatialReference(sr);
+        query.setGeometry(env);
+        query.setOutFields(new String[] {"*"});
+        QueryTask queryTask = new QueryTask(layerUrl);
+        try {
+            FeatureSet results = queryTask.execute(query);
+            for (Graphic graphic : results.getGraphics()) {
+                popup = tiledLayer.createPopup(mMapView, layerID, graphic);
+                popupContainer.addPopup(popup);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        PopupDialog popupDialog = new PopupDialog(mMapView.getContext(), popupContainer);
+        popupDialog.show();
+    }
+
     // method used to set a selected layer visible
     public void onLayerSelected(String layerName){
-        String layerURL = "URL_"+layerName; //this is how the layerURL looks like in the strings.xml
-        int identifier = getStringIdentifier(this, layerURL); //create an identifier to access the string from strings.xml with getString()
+        String layerURL_feature = "URL_"+layerName; //this is how the layerURL looks like in the strings.xml
+        int identifier = getStringIdentifier(this, layerURL_feature); //create an identifier to access the string from strings.xml with getString()
         mFeatureServiceURL = this.getResources().getString(identifier);
         // Add Feature layer to the MapView
         mFeatureLayer=createFeatureLayer(mFeatureServiceURL);
         mMapView.addLayer(mFeatureLayer);
-        // Add Graphics layer to the MapView
-        mGraphicsLayer = new GraphicsLayer();
-        mMapView.addLayer(mGraphicsLayer);
     }
+
+
+
 
     // method used to remove a layer which isn't selected <-- needs to be defined properly is not working yet!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     public void onLayerDeselected(){
-        mMapView.removeLayer(mGraphicsLayer);
+        //mMapView.removeLayer(mGraphicsLayer);
     }
 
     // method to create a StringIdentifier to access the strings.xml file
@@ -346,15 +367,43 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == selectedTour) {
         // Get the feature service URL from values->strings.xml
-        mFeatureServiceURL = this.getResources().getString(R.string.URL_tour01_stops);
+        mFeatureServiceURL = this.getResources().getString(R.string.URL_tour01_route);
         // Add Feature layer to the MapView
         mFeatureLayer = new ArcGISFeatureLayer(mFeatureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND);
         mMapView.addLayer(mFeatureLayer);
         // Add Graphics layer to the MapView
         mGraphicsLayer = new GraphicsLayer();
         mMapView.addLayer(mGraphicsLayer);
+        mMapView.addLayer(graphicsLayer);
         }
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+
+        currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        graphicsLayer.removeAll();
+
+        Point myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
+
+        graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.BLUE,10, SimpleMarkerSymbol.STYLE.CIRCLE)));
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
 }
 
