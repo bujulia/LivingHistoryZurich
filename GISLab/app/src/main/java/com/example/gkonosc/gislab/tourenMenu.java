@@ -46,7 +46,9 @@ public class tourenMenu extends Activity {
     }
 
     private void triggerTour1ButtonAction(){
-        setResult(1);
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("tour", "tour01_route");
+        setResult(Activity.RESULT_OK,resultIntent);
         finish();
     }
 
