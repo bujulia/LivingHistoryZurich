@@ -36,8 +36,9 @@
     <string name="distanz_groesser">Distanz muss grösser als ein Meter sein</string>
     <string name="jahr_groesser">Jahr muss grösser als 0 sein</string>
 
-
     <string name="title_activity_touren_menu">Touren</string>
+
+    <string name="myClientID">k0jbXROcORxlOPsQ</string>
 
     <string name="URL_tour01_stops">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/Tour01/FeatureServer/2</string>
     <string name="URL_tour01_route">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/Tour01/FeatureServer/3</string>

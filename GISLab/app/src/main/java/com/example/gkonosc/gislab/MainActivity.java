@@ -30,6 +30,7 @@ import com.esri.android.map.event.OnStatusChangedListener;
 import com.esri.android.map.ogc.WMSLayer;
 import com.esri.android.map.popup.Popup;
 import com.esri.android.map.popup.PopupContainer;
+import com.esri.android.runtime.ArcGISRuntime;
 import com.esri.android.toolkit.map.MapViewHelper;
 import com.esri.core.geometry.Envelope;
 import com.esri.core.geometry.GeometryEngine;
@@ -84,6 +85,8 @@ public class MainActivity extends Activity implements LocationListener{
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ArcGISRuntime.setClientId(getResources().getString(R.string.myClientID));
 
         // after the content of this activity is set
         // the map can be accessed from the layout
@@ -311,6 +314,8 @@ public class MainActivity extends Activity implements LocationListener{
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        popupContainer.getCurrentPopup();
 
         PopupDialog popupDialog = new PopupDialog(mMapView.getContext(), popupContainer);
         popupDialog.show();
