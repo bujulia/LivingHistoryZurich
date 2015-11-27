@@ -24,10 +24,14 @@
     <string name="lblGarten">Gartentyp</string>
     <string name="lblDenkm">Denkmalobjekte</string>
     <string name="lblJahr">Jahr</string>
-    <string name="lblBis">Bis</string>
+    <string name="lblBis">bis</string>
     <string name="lblMeter">Meter</string>
     <string name="buttonAnwenden">Anwenden</string>
     <string name="buttonBack">Zurück</string>
+    <string name="hintStart">z.B. 1900</string>
+    <string name="hintEnd">z.B. 1920</string>
+    <string name="hintDist">z.B. 100</string>
+    <string name="notWorking">Under construction</string>
 
     <string name="Tour_1_Description">Tour 1: Innenstadt \nDauer: 1.5h</string>
     <string name="Tour_4_Description">Tour 4: Wiedikon \nDauer: 1.75h</string>
@@ -40,27 +44,15 @@
 
     <string name="myClientID">k0jbXROcORxlOPsQ</string>
 
-    <string name="URL_tour01_stops">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/Tour01/FeatureServer/2</string>
-    <string name="URL_tour01_route">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/Tour01/FeatureServer/3</string>
+    <string name="URL_map_tour01">http://tiles.arcgis.com/tiles/i9MtZ1vtgD3gTnyL/arcgis/rest/services/Tour01/MapServer/</string>
+    <string name="URL_tour01_stops">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/Tour01/FeatureServer/1</string>
+    <string name="URL_tour01_route">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/Tour01/FeatureServer/2</string>
     <string name="URL_Garten">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/OGD_data/FeatureServer/2</string>
     <string name="URL_map_Garten">http://tiles.arcgis.com/tiles/i9MtZ1vtgD3gTnyL/arcgis/rest/services/OGD_data/MapServer/2</string>
     <string name="URL_Denkm">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/OGD_data/FeatureServer/0</string>
     <string name="URL_map_Denkm">http://tiles.arcgis.com/tiles/i9MtZ1vtgD3gTnyL/arcgis/rest/services/OGD_data/MapServer/0</string>
     <string name="URL_Aussicht">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/OGD_data/FeatureServer/1</string>
     <string name="URL_map_Aussicht">http://tiles.arcgis.com/tiles/i9MtZ1vtgD3gTnyL/arcgis/rest/services/OGD_data/MapServer/1</string>
-
-    <string-array name="colorList">
-        <item >Black</item>
-        <item >White</item>
-        <item >Red</item>
-        <item >Blue</item>
-        <item >Yellow</item>
-        <item >Green</item>
-        <item >Brown</item>
-        <item >Pink</item>
-        <item >Orange</item>
-        <item >Purple</item>
-    </string-array>
 
     <string-array name="gartenTypen">
         <item>Friedhof </item>

@@ -67,7 +67,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignEnd="@+id/lblSuchdis"
         android:layout_alignRight="@+id/lblSuchdis"
-        android:hint="@string/lblMeter"
+        android:hint="@string/hintDist"
         android:maxLength="5"/>
 
     <EditText
@@ -75,7 +75,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:id="@+id/startInput"
-        android:hint="@string/lblJahr"
+        android:hint="@string/hintStart"
         android:maxLength="4"
         android:layout_alignBottom="@+id/lblBis"
         android:layout_alignParentStart="true"
@@ -86,7 +86,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:id="@+id/endInput"
-        android:hint="@string/lblJahr"
+        android:hint="@string/hintEnd"
         android:maxLength="4"
         android:layout_below="@+id/lblJahr"
         android:layout_toStartOf="@+id/backButton"
@@ -120,7 +120,8 @@
         android:layout_marginBottom="38dp"
         android:layout_alignParentBottom="true"
         android:layout_alignEnd="@+id/backButton"
-        android:layout_alignRight="@+id/backButton" />
+        android:layout_alignRight="@+id/backButton"
+        android:textColor="#808080"/>
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -130,7 +131,16 @@
         android:id="@+id/backButton"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true"
+        android:textColor="#808080"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/notWorking"
+        android:id="@+id/notWorking"
+        android:textColor="#ffff1309"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

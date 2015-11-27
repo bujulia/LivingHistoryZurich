@@ -9,10 +9,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
-import com.esri.android.map.GraphicsLayer;
-import com.esri.android.map.MapView;
-import com.esri.android.map.ags.ArcGISFeatureLayer;
-
 
 public class tourenMenu extends Activity {
 
@@ -47,7 +43,7 @@ public class tourenMenu extends Activity {
 
     private void triggerTour1ButtonAction(){
         Intent resultIntent = new Intent();
-        resultIntent.putExtra("tour", "tour01_route");
+        resultIntent.putExtra("tour", "tour01");
         setResult(Activity.RESULT_OK,resultIntent);
         finish();
     }

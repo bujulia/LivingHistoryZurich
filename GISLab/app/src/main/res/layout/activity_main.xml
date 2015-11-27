@@ -13,10 +13,12 @@
         mapoptions.MapType="Topo"
         mapoptions.center="47.38, 8.54"
         mapoptions.ZoomLevel="17"
-        android:layout_above="@+id/kartenButton" />
+        android:layout_above="@+id/kartenButton"
+        android:layout_marginBottom = "5dip"/>
 
     <Button
         android:text="@string/buttonKarten"
+        android:textColor="#808080"
         android:id="@+id/kartenButton"
         android:layout_width="80dip"
         android:layout_height="80dip"
@@ -27,6 +29,7 @@
 
     <Button
         android:text="@string/buttonEbenen"
+        android:textColor="#808080"
         android:id="@+id/ebenenButton"
         android:layout_width="80dip"
         android:layout_height="80dip"
@@ -37,6 +40,7 @@
 
     <Button
         android:text="@string/buttonFilter"
+        android:textColor="#808080"
         android:id="@+id/filterButton"
         android:layout_width="80dip"
         android:layout_height="80dip"
@@ -47,6 +51,7 @@
 
     <Button
         android:text="@string/buttonTouren"
+        android:textColor="#808080"
         android:id="@+id/tourenButton"
         android:layout_width="80dip"
         android:layout_height="80dip"
@@ -57,14 +62,15 @@
         android:background="@android:color/transparent"/>
 
     <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Stop tour"
+        android:textColor="#808080"
         android:id="@+id/stopTourButton"
-        android:layout_width="40dip"
-        android:layout_height="40dip"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/autoComplete"
-        android:focusableInTouchMode="false"
-        android:background="@android:color/white"
         android:visibility="invisible"/>
 
     <RadioGroup
@@ -81,35 +87,40 @@
             android:text="@string/radioAktuell"
             android:id="@+id/radioAktuell"
             android:onClick="onRadioButtonClicked"
-            android:checked="true"/>
+            android:checked="true"
+            android:textColor="#808080"/>
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/radio1970"
             android:id="@+id/radio1970"
-            android:onClick="onRadioButtonClicked"/>
+            android:onClick="onRadioButtonClicked"
+            android:textColor="#808080"/>
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/radio1900"
             android:id="@+id/radio1900"
-            android:onClick="onRadioButtonClicked"/>
+            android:onClick="onRadioButtonClicked"
+            android:textColor="#808080"/>
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/radio1860"
             android:id="@+id/radio1860"
-            android:onClick="onRadioButtonClicked"/>
+            android:onClick="onRadioButtonClicked"
+            android:textColor="#808080"/>
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/radio1793"
             android:id="@+id/radio1793"
-            android:onClick="onRadioButtonClicked"/>
+            android:onClick="onRadioButtonClicked"
+            android:textColor="#808080"/>
     </RadioGroup>
 
     <LinearLayout
@@ -126,21 +137,24 @@
             android:layout_height="wrap_content"
             android:text="@string/checkDenkm"
             android:id="@+id/checkDenkm"
-            android:onClick="onCheckBoxClicked"/>
+            android:onClick="onCheckBoxClicked"
+            android:textColor="#808080"/>
 
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/checkGarten"
             android:id="@+id/checkGarten"
-            android:onClick="onCheckBoxClicked"/>
+            android:onClick="onCheckBoxClicked"
+            android:textColor="#808080"/>
 
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/checkAussicht"
             android:id="@+id/checkAussicht"
-            android:onClick="onCheckBoxClicked"/>
+            android:onClick="onCheckBoxClicked"
+            android:textColor="#808080"/>
     </LinearLayout>
 
 
