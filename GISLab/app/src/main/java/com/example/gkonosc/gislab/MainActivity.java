@@ -49,6 +49,9 @@ public class MainActivity extends Activity implements LocationListener{
 
     MapView mMapView;
     public ArcGISFeatureLayer mFeatureLayer;
+    public ArcGISFeatureLayer mFeatureLayerDenkm;
+    public ArcGISFeatureLayer mFeatureLayerGarten;
+    public ArcGISFeatureLayer mFeatureLayerAussicht;
     GraphicsLayer mGraphicsLayer;
     boolean mIsMapLoaded;
     String mFeatureServiceURL;
@@ -58,6 +61,9 @@ public class MainActivity extends Activity implements LocationListener{
     public String visible;
     private WMSLayer oldWMS;
     final static int selectedTour = 1234;
+    public int denkNo = 0;
+    public int gartenNo = 0;
+    public int aussichtNo = 0;
 
     //References to GUI elements
     private Button kartenButton;
@@ -96,7 +102,6 @@ public class MainActivity extends Activity implements LocationListener{
 
         mMapView.addLayer(graphicsLayer);
 
-
         mMapView.addLayer(graphicsLayer);
 
         mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
@@ -125,7 +130,6 @@ public class MainActivity extends Activity implements LocationListener{
         Point myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
 
         graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.BLUE,10, SimpleMarkerSymbol.STYLE.CIRCLE)));
-
 
         //Define what kartenButton will do on a click
         kartenButton.setOnClickListener(new View.OnClickListener() {
@@ -209,6 +213,19 @@ public class MainActivity extends Activity implements LocationListener{
         boolean checked = ((RadioButton) view).isChecked();
         oldWMS = wmsLayer;
 
+        /*if (denkNo == 1){
+            DenkmDeselected();
+            Log.d("Step: ", "1");
+        }
+        if (gartenNo == 1){
+            GartenDeselected();
+            Log.d("Step: ", "2");
+        }
+        if (aussichtNo == 1){
+            AussichtDeselected();
+            Log.d("Step: ", "3");
+        }*/
+
         switch (view.getId()){
             //Radio button for the basemap of today
             case R.id.radioAktuell:
@@ -242,7 +259,23 @@ public class MainActivity extends Activity implements LocationListener{
         }
 
         createWMSURL(visible);
+
+        if (gartenNo == 1){
+            GartenSelected("Garten");
+            Log.d("Step: ", "5");
+        }
+        if (denkNo == 1){
+            DenkmSelected("Denkm");
+            Log.d("Step: ", "4");
+        }
+        if (aussichtNo == 1){
+            AussichtSelected("Aussicht");
+            Log.d("Step: ", "6");
+        }
+
+        mMapView.addLayer(mGraphicsLayer);
         mMapView.addLayer(graphicsLayer);
+
         mMapView.removeLayer(oldWMS);
     }
 
@@ -254,29 +287,40 @@ public class MainActivity extends Activity implements LocationListener{
             //Click box for Denkmalpflege of today
             case R.id.checkDenkm:
                 if (checked){
-                    onLayerSelected("Denkm");
-                    }
+                    DenkmSelected("Denkm");
+                    denkNo = 1;
+                }
                 else{
                     Log.d("StartMenu", "denkm off");
-                    onLayerDeselected();}
+                    DenkmDeselected();
+                    denkNo = 0;
+                }
                 break;
 
             //Click box for Denkmalpflege of today
             case R.id.checkGarten:
                 if (checked) {
-                    onLayerSelected("Garten");}
+                    GartenSelected("Garten");
+                    gartenNo = 1;
+                }
                 else{
                     Log.d("StartMenu", "garten off");
-                    onLayerDeselected();}
+                    GartenDeselected();
+                    gartenNo = 0;
+                }
                 break;
 
             //Click box for Aussicht of today
             case R.id.checkAussicht:
                 if (checked){
-                    onLayerSelected("Aussicht");}
+                    AussichtSelected("Aussicht");
+                    aussichtNo = 1;
+                }
                 else{
                     Log.d("StartMenu", "aussicht off");
-                    onLayerDeselected();}
+                    AussichtDeselected();
+                    aussichtNo = 0;
+                }
                 break;
 
         }
@@ -321,19 +365,51 @@ public class MainActivity extends Activity implements LocationListener{
         popupDialog.show();
     }
 
-    // method used to set a selected layer visible
     public void onLayerSelected(String layerName){
         String layerURL_feature = "URL_"+layerName; //this is how the layerURL looks like in the strings.xml
         int identifier = getStringIdentifier(this, layerURL_feature); //create an identifier to access the string from strings.xml with getString()
         mFeatureServiceURL = this.getResources().getString(identifier);
-        // Add Feature layer to the MapView
         mFeatureLayer=createFeatureLayer(mFeatureServiceURL);
         mMapView.addLayer(mFeatureLayer);
     }
 
-    // method used to remove a layer which isn't selected <-- needs to be defined properly is not working yet!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    public void onLayerDeselected(){
-        //mMapView.removeLayer(mGraphicsLayer);
+    public void DenkmDeselected(){
+        mMapView.removeLayer(mFeatureLayerDenkm);
+    }
+
+    public void DenkmSelected(String garten){
+        String layerURL = "URL_"+ garten; //this is how the layerURL looks like in the strings.xml
+        int identifier = getStringIdentifier(this, layerURL); //create an identifier to access the string from strings.xml with getString()
+        mFeatureServiceURL = this.getResources().getString(identifier);
+        mFeatureLayerDenkm = createFeatureLayer(mFeatureServiceURL);
+        mMapView.addLayer(mFeatureLayerDenkm);
+        mMapView.addLayer(graphicsLayer);
+    }
+
+    public void GartenSelected(String garten){
+        String layerURL = "URL_"+ garten; //this is how the layerURL looks like in the strings.xml
+        int identifier = getStringIdentifier(this, layerURL); //create an identifier to access the string from strings.xml with getString()
+        mFeatureServiceURL = this.getResources().getString(identifier);
+        mFeatureLayerGarten = createFeatureLayer(mFeatureServiceURL);
+        mMapView.addLayer(mFeatureLayerGarten);
+        mMapView.addLayer(graphicsLayer);
+    }
+
+    public void GartenDeselected(){
+        mMapView.removeLayer(mFeatureLayerGarten);
+    }
+
+    public void AussichtSelected(String aussicht){
+        String layerURL = "URL_"+ aussicht; //this is how the layerURL looks like in the strings.xml
+        int identifier = getStringIdentifier(this, layerURL); //create an identifier to access the string from strings.xml with getString()
+        mFeatureServiceURL = this.getResources().getString(identifier);
+        mFeatureLayerAussicht=createFeatureLayer(mFeatureServiceURL);
+        mMapView.addLayer(mFeatureLayerAussicht);
+        mMapView.addLayer(graphicsLayer);
+    }
+
+    public void AussichtDeselected(){
+        mMapView.removeLayer(mFeatureLayerAussicht);
     }
 
     // method to create a StringIdentifier to access the strings.xml file
@@ -388,6 +464,7 @@ public class MainActivity extends Activity implements LocationListener{
                 String myValue = data.getStringExtra("tour");
                 onLayerSelected(myValue);
             }
+            mMapView.addLayer(mFeatureLayer);
         }
     }
 
