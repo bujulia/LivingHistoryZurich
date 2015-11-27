@@ -360,15 +360,25 @@ public class MainActivity extends Activity implements LocationListener{
         popupDialog.show();
     }
 
+    public void onLayerSelected(String layerName){
         String layerURL_feature = "URL_"+layerName; //this is how the layerURL looks like in the strings.xml
         int identifier = getStringIdentifier(this, layerURL_feature); //create an identifier to access the string from strings.xml with getString()
         mFeatureServiceURL = this.getResources().getString(identifier);
-        mFeatureLayerDenkm=createFeatureLayer(mFeatureServiceURL);
-        mMapView.addLayer(mFeatureLayerDenkm);
+        mFeatureLayer=createFeatureLayer(mFeatureServiceURL);
+        mMapView.addLayer(mFeatureLayer);
     }
 
     public void DenkmDeselected(){
         mMapView.removeLayer(mFeatureLayerDenkm);
+    }
+
+    public void DenkmSelected(String garten){
+        String layerURL = "URL_"+ garten; //this is how the layerURL looks like in the strings.xml
+        int identifier = getStringIdentifier(this, layerURL); //create an identifier to access the string from strings.xml with getString()
+        mFeatureServiceURL = this.getResources().getString(identifier);
+        mFeatureLayerDenkm = createFeatureLayer(mFeatureServiceURL);
+        mMapView.addLayer(mFeatureLayerDenkm);
+        mMapView.addLayer(graphicsLayer);
     }
 
     public void GartenSelected(String garten){
