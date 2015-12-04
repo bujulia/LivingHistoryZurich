@@ -33,8 +33,8 @@
     <string name="hintDist">z.B. 100</string>
     <string name="notWorking">Under construction</string>
 
-    <string name="Tour_1_Description">Tour 1: Innenstadt \nDauer: 1.5h</string>
-    <string name="Tour_4_Description">Tour 4: Wiedikon \nDauer: 1.75h</string>
+    <string name="Tour_1_Description">Tour 1: Innenstadt\nDauer: 1.5h\nerschienen: 2005\naktualisiert: 2012</string>
+    <string name="Tour_4_Description">Tour 4: Wiedikon\nDauer: 1.75h\nerschienen: 2005\naktualisiert: 2014</string>
 
     <string name="zahlen_angeben">Bitte Zahlen angeben, keine Buchstaben</string>
     <string name="distanz_groesser">Distanz muss grösser als ein Meter sein</string>

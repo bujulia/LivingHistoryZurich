@@ -8,45 +8,40 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.esri.android.map.GraphicsLayer;
+import com.esri.android.map.Layer;
 import com.esri.android.map.MapView;
 import com.esri.android.map.ags.ArcGISFeatureLayer;
-import com.esri.android.map.ags.ArcGISLayerInfo;
-import com.esri.android.map.ags.ArcGISPopupInfo;
-import com.esri.android.map.ags.ArcGISTiledMapServiceLayer;
+import com.esri.android.map.event.OnSingleTapListener;
 import com.esri.android.map.event.OnStatusChangedListener;
 import com.esri.android.map.ogc.WMSLayer;
-import com.esri.android.map.popup.Popup;
-import com.esri.android.map.popup.PopupContainer;
 import com.esri.android.runtime.ArcGISRuntime;
 import com.esri.android.toolkit.map.MapViewHelper;
-import com.esri.core.geodatabase.GeodatabaseFeatureServiceTable;
-import com.esri.core.geometry.Envelope;
 import com.esri.core.geometry.GeometryEngine;
 import com.esri.core.geometry.Point;
 import com.esri.core.geometry.SpatialReference;
-import com.esri.core.map.FeatureSet;
 import com.esri.core.map.Graphic;
 import com.esri.core.symbol.SimpleMarkerSymbol;
-import com.esri.core.table.TableException;
-import com.esri.core.tasks.ags.query.Query;
-import com.esri.core.tasks.ags.query.QueryTask;
-
 
 
 public class MainActivity extends Activity implements LocationListener{
 
-
     MapView mMapView;
+    private Graphic mIdentifiedGraphic;
     public ArcGISFeatureLayer mFeatureLayer;
     public ArcGISFeatureLayer mFeatureLayerDenkm;
     public ArcGISFeatureLayer mFeatureLayerGarten;
@@ -81,10 +76,8 @@ public class MainActivity extends Activity implements LocationListener{
     public Location currentLocation;
     public GraphicsLayer graphicsLayer = new GraphicsLayer();
 
-    public static int WKID_WGS84;
-
     private MapViewHelper mMapViewHelper;
-    public GeodatabaseFeatureServiceTable mFeatureServiceTable;
+
 
 
     @Override
@@ -122,6 +115,29 @@ public class MainActivity extends Activity implements LocationListener{
         stopTourButton = (Button) findViewById(R.id.stopTourButton);
         kartenOption = (RadioGroup) findViewById(R.id.kartenOption);
         ebenenOption = (LinearLayout) findViewById(R.id.ebenenOption);
+
+        // Set a tap listener on the map. -------------------------------------------------
+        mMapView.setOnSingleTapListener(new OnSingleTapListener() {
+            @Override
+            public void onSingleTap(float x, float y) {
+                searchForFeature(x, y);
+
+                Log.d("tag", "Found graphic: " + mIdentifiedGraphic);
+
+                if (mIdentifiedGraphic != null) {
+                    showPopup(mIdentifiedGraphic);
+                    if (kartenOption.getVisibility() == View.VISIBLE) {
+                        kartenOption.setVisibility(View.GONE); }
+
+                    else if (ebenenOption.getVisibility() == View.VISIBLE) {
+                        ebenenOption.setVisibility(View.GONE);  }
+                }
+
+            }
+        });
+        // --------------------------------------------------------------------------------
+
+
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 5, this);
@@ -168,6 +184,89 @@ public class MainActivity extends Activity implements LocationListener{
         });
     }
 
+    // A bunch of methods to determine if the thing a user clicked on is a feature
+    // and show a popup, if so. -------------------------------------------------------
+    // See https://geonet.esri.com/thread/77290.
+    private void showPopup(Graphic feature) {
+        final PopupWindow popUp = new PopupWindow(this);
+
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        popUp.setContentView(inflater.inflate(R.layout.popup_feature, null, false));
+        popUp.showAtLocation(findViewById(R.id.map), Gravity.FILL_HORIZONTAL, 0, 100);
+        popUp.update(50, 50, 650, 500);
+
+        TextView v = (TextView) popUp.getContentView().findViewById(R.id.textView3);
+        Button b = (Button) popUp.getContentView().findViewById(R.id.btnRoute);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Here you can call the routing, and close the popup afterwards.
+// ROUTING TASK NEEDS TO BE STARTED HERE!!! //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // to do the routing to a feature that has the popup shown, you can acess the Graphic feature which is taken as an input for this method and get its geometry by .getGeometry
+                popUp.dismiss();
+
+            }
+        });
+        Log.d("tags", feature.getAttributes().toString());
+        if (feature.getAttributeValue("OBJEKTBEZE") != null) {
+            v.setText(" Denkmalpflegeinventarobjekt \n Bezeichnung: " + feature.getAttributeValue("OBJEKTBEZE").toString()+
+                    "\n N\u00e4here Bezeichnung: "+ feature.getAttributeValue("NAEHEREBEZ").toString()+
+                    "\n Baujahr: "+ feature.getAttributeValue("BAUJAHR").toString());
+
+        }
+        else if (feature.getAttributeValue("NAME")!= null) {
+            v.setText(" Aussichtspunkt \n Name: " + feature.getAttributeValue("NAME").toString());
+        }
+        else if (feature.getAttributeValue("BEZEICHNUN")!= null) {
+            v.setText(" Gartendenkmal \n Bezeichnung: " + feature.getAttributeValue("BEZEICHNUN").toString()+
+                    "\n Typ: " + feature.getAttributeValue("TYP").toString());
+        }
+        else if (feature.getAttributeValue("Info")!= null) {
+            v.setText(" Tour \n Halt Nummer " + feature.getAttributeValue("Nummer").toString()+
+                    "\n Name: " + feature.getAttributeValue("Name").toString()+
+                    "\n Info: " + feature.getAttributeValue("Info").toString());
+        }
+        else {
+            v.setText("Kein Objekt gefunden");
+        }
+
+    }
+
+
+    private void searchForFeature(float x, float y) {
+
+        Point mapPoint = mMapView.toMapPoint(x, y);
+
+        if (mapPoint != null) {
+
+            for (Layer layer : mMapView.getLayers()) {
+                Log.d("layer", "Checking layer: " + layer);
+                if (layer == null)
+                    continue;
+
+                if (layer instanceof ArcGISFeatureLayer) {
+                    Log.d("layer", "Layer is a feature layer: " + layer);
+                    ArcGISFeatureLayer fLayer = (ArcGISFeatureLayer) layer;
+                    // Get the Graphic at location x,y
+                    mIdentifiedGraphic = getFeature(fLayer, x, y);
+                } else
+                    continue;
+            }
+        }
+    }
+
+    private Graphic getFeature(ArcGISFeatureLayer fLayer, float x, float y) {
+
+        // Get the graphics near the Point.
+        int[] ids = fLayer.getGraphicIDs(x, y, 10, 1);
+        if (ids == null || ids.length == 0) {
+            return null;
+        }
+        Graphic g = fLayer.getGraphic(ids[0]);
+        return g;
+    }
+    // -------------------------------------------------------------------------------
+
     //Opens or closes the list of possible Karten options
     private void triggerKartenButtonAction(){
         if (kartenOption.getVisibility() == View.VISIBLE){
@@ -201,6 +300,11 @@ public class MainActivity extends Activity implements LocationListener{
         Intent myIntent = new Intent(getBaseContext(),tourenMenu.class);
         //myIntent.setAction(Intent.ACTION_VIEW);
         startActivityForResult(myIntent, selectedTour);
+        if (stopsNo==1){
+        deselectLayer(mFeatureLayerRoute);
+        deselectLayer(mFeatureLayerStops);
+            stopsNo = 0;
+        routeNo = 0;}
     }
 
     //Removes the tour from the map, needs editing
@@ -325,55 +429,6 @@ public class MainActivity extends Activity implements LocationListener{
                 break;
 
         }
-    }
-
-    public void onLayerSelected2(String layerName){
-        ArcGISTiledMapServiceLayer tiledLayer = new ArcGISTiledMapServiceLayer("http://tiles.arcgis.com/tiles/i9MtZ1vtgD3gTnyL/arcgis/rest/services/OGD_data/MapServer");
-        mMapView.addLayer(tiledLayer);
-
-        //********************************** popup part *************************************
-        PopupContainer popupContainer = new PopupContainer(mMapView);
-        Envelope env = tiledLayer.getFullExtent();
-        ArcGISLayerInfo layerInfo = new ArcGISLayerInfo();
-        SpatialReference sr = SpatialReference.create(WKID_WGS84);
-        Popup popup;
-        layerInfo.getLayers();
-
-        int layerID=layerInfo.getId();
-        String layerUrl = tiledLayer.getQueryUrl(layerID);
-        if (layerUrl == null)
-            layerUrl = tiledLayer.getUrl() + "/" + layerID;
-        ArcGISPopupInfo popupInfo = tiledLayer.getPopupInfo(layerID);
-        Query query = new Query();
-        query.setInSpatialReference(sr);
-        query.setOutSpatialReference(sr);
-        query.setGeometry(env);
-        query.setOutFields(new String[]{"*"});
-        QueryTask queryTask = new QueryTask(layerUrl);
-        try {
-            FeatureSet results = queryTask.execute(query);
-            for (Graphic graphic : results.getGraphics()) {
-                popup = tiledLayer.createPopup(mMapView, layerID, graphic);
-                popupContainer.addPopup(popup);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        popupContainer.getCurrentPopup();
-
-        PopupDialog popupDialog = new PopupDialog(mMapView.getContext(), popupContainer);
-        popupDialog.show();
-
-        mFeatureServiceURL = getStringURL(layerName, "URL_");
-        mFeatureServiceTable = new GeodatabaseFeatureServiceTable(mFeatureServiceURL,0);
-        try {
-            mFeatureServiceTable.getFeature(1);
-        } catch (TableException e) {
-            e.printStackTrace();
-        }
-
-
     }
 
     public void layerSelected(String layerName){

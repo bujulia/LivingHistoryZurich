@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Feature Title"
+        android:id="@+id/textView3"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.07"
+        android:textColor="#ffffff"/>
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="157dp"
+        android:layout_height="wrap_content"
+        android:text="Los Gehts!"
+        android:id="@+id/btnRoute"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.07"
+        android:textColor="#808080"
+        android:layout_alignParentStart="true"/>
+</LinearLayout>
