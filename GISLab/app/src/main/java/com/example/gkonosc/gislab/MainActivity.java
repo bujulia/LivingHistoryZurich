@@ -48,10 +48,9 @@ public class MainActivity extends Activity implements LocationListener{
     public ArcGISFeatureLayer mFeatureLayerAussicht;
     public ArcGISFeatureLayer mFeatureLayerStops;
     public ArcGISFeatureLayer mFeatureLayerRoute;
-    GraphicsLayer mGraphicsLayer;
+
     boolean mIsMapLoaded;
     String mFeatureServiceURL;
-    String mMapServiceURL;
     WMSLayer wmsLayer;
     String wmsURL;
     public String visible;
@@ -62,6 +61,8 @@ public class MainActivity extends Activity implements LocationListener{
     public int aussichtNo = 0;
     public int stopsNo = 0;
     public int routeNo = 0;
+    Point myPoint;
+    public String destination;
 
     //References to GUI elements
     private Button kartenButton;
@@ -137,14 +138,11 @@ public class MainActivity extends Activity implements LocationListener{
         });
         // --------------------------------------------------------------------------------
 
-
-
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 5, this);
         currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-
-        Point myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
+        myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
 
         graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.BLUE,10, SimpleMarkerSymbol.STYLE.CIRCLE)));
 
@@ -200,11 +198,17 @@ public class MainActivity extends Activity implements LocationListener{
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Here you can call the routing, and close the popup afterwards.
-// ROUTING TASK NEEDS TO BE STARTED HERE!!! //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                // to do the routing to a feature that has the popup shown, you can acess the Graphic feature which is taken as an input for this method and get its geometry by .getGeometry
-                popUp.dismiss();
 
+                destination = ((Point)mIdentifiedGraphic.getGeometry()).getX() + "," + ((Point)mIdentifiedGraphic.getGeometry()).getY();
+                Log.d("POI coordinates: ", destination);
+
+                // Routing task starts here
+                Intent intent = new Intent(MainActivity.this, Routing.class);
+                intent.putExtra("destination", destination);
+                startActivity(intent);
+                new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+
+                popUp.dismiss();
             }
         });
         Log.d("tags", feature.getAttributes().toString());
