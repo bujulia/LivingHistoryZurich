@@ -12,7 +12,7 @@
         android:layout_height="fill_parent"
         mapoptions.MapType="Topo"
         mapoptions.center="47.38, 8.54"
-        mapoptions.ZoomLevel="15"
+        mapoptions.ZoomLevel="16"
         android:layout_above="@+id/kartenButton"
         android:layout_marginBottom = "5dip"/>
 
