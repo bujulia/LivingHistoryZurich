@@ -16,6 +16,7 @@
         android:layout_above="@+id/kartenButton"
         android:layout_marginBottom = "5dip"/>
 
+    <!--Karten button -->
     <Button
         android:text="@string/buttonKarten"
         android:textColor="#808080"
@@ -27,6 +28,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true" />
 
+    <!--Ebenen button -->
     <Button
         android:text="@string/buttonEbenen"
         android:textColor="#808080"
@@ -38,6 +40,7 @@
         android:drawableTop="@drawable/symbol_layers"
         android:background="@android:color/transparent"/>
 
+    <!--Filter button -->
     <Button
         android:text="@string/buttonFilter"
         android:textColor="#808080"
@@ -49,6 +52,7 @@
         android:drawableTop="@drawable/symbol_filter"
         android:background="@android:color/transparent"/>
 
+    <!--Touren button -->
     <Button
         android:text="@string/buttonTouren"
         android:textColor="#808080"
@@ -61,11 +65,12 @@
         android:drawableTop="@drawable/symbol_tours"
         android:background="@android:color/transparent"/>
 
+    <!--Stop tour button -->
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Stop tour"
+        android:text="@string/buttonStopTour"
         android:textColor="#808080"
         android:id="@+id/stopTourButton"
         android:layout_alignParentTop="true"
@@ -73,6 +78,20 @@
         android:layout_alignParentRight="true"
         android:visibility="invisible"/>
 
+    <!--Stop route button -->
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/buttonStopRoute"
+        android:textColor="#808080"
+        android:id="@+id/stopRouteButton"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:visibility="invisible"/>
+
+    <!--Radio group of the radio buttons for the base maps -->
     <RadioGroup
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -81,6 +100,7 @@
         android:background="#ffeeeeee"
         android:visibility="invisible">
 
+        <!--Radio button for the current base maps -->
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -90,6 +110,7 @@
             android:checked="true"
             android:textColor="#808080"/>
 
+        <!--Radio button for the base maps from 1970 -->
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -98,6 +119,7 @@
             android:onClick="onRadioButtonClicked"
             android:textColor="#808080"/>
 
+        <!--Radio button for the base maps from 1900 -->
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -106,6 +128,7 @@
             android:onClick="onRadioButtonClicked"
             android:textColor="#808080"/>
 
+        <!--Radio button for the base maps from 1860 -->
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -114,6 +137,7 @@
             android:onClick="onRadioButtonClicked"
             android:textColor="#808080"/>
 
+        <!--Radio button for the base maps from 1793 -->
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -123,6 +147,7 @@
             android:textColor="#808080"/>
     </RadioGroup>
 
+    <!--Linear layout for the check boxes -->
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
@@ -132,6 +157,7 @@
         android:background="#ffeeeeee"
         android:visibility="invisible">
 
+        <!--Check box for the layer Denkmalpflege -->
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -140,6 +166,7 @@
             android:onClick="onCheckBoxClicked"
             android:textColor="#808080"/>
 
+        <!--Check box for the layer Gartendenkmal -->
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -148,6 +175,7 @@
             android:onClick="onCheckBoxClicked"
             android:textColor="#808080"/>
 
+        <!--Check box for the layer Aussichtspunkte -->
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

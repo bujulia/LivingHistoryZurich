@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -21,6 +22,7 @@ import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.esri.android.map.GraphicsLayer;
 import com.esri.android.map.Layer;
@@ -31,11 +33,25 @@ import com.esri.android.map.event.OnStatusChangedListener;
 import com.esri.android.map.ogc.WMSLayer;
 import com.esri.android.runtime.ArcGISRuntime;
 import com.esri.android.toolkit.map.MapViewHelper;
+import com.esri.core.geometry.CoordinateConversion;
+import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
 import com.esri.core.geometry.Point;
 import com.esri.core.geometry.SpatialReference;
+import com.esri.core.io.UserCredentials;
 import com.esri.core.map.Graphic;
+import com.esri.core.symbol.SimpleLineSymbol;
 import com.esri.core.symbol.SimpleMarkerSymbol;
+import com.esri.core.tasks.na.CostAttribute;
+import com.esri.core.tasks.na.NAFeaturesAsFeature;
+import com.esri.core.tasks.na.NetworkDescription;
+import com.esri.core.tasks.na.Route;
+import com.esri.core.tasks.na.RouteParameters;
+import com.esri.core.tasks.na.RouteResult;
+import com.esri.core.tasks.na.RouteTask;
+import com.esri.core.tasks.na.StopGraphic;
+
+import java.util.List;
 
 
 public class MainActivity extends Activity implements LocationListener{
@@ -56,11 +72,12 @@ public class MainActivity extends Activity implements LocationListener{
     public String visible;
     private WMSLayer oldWMS;
     final static int selectedTour = 1234;
-    public int denkNo = 0;
-    public int gartenNo = 0;
-    public int aussichtNo = 0;
-    public int stopsNo = 0;
-    public int routeNo = 0;
+    public boolean denkVisible = false;
+    public boolean gartenVisible = false;
+    public boolean aussichtVisible = false;
+    public boolean stopsVisible = false;
+    public boolean routeVisible = false;
+    public boolean routeLayerVisible = false;
     Point myPoint;
     public String destination;
 
@@ -70,6 +87,7 @@ public class MainActivity extends Activity implements LocationListener{
     private Button filterButton;
     private Button tourenButton;
     private Button stopTourButton;
+    private Button stopRouteButton;
     private RadioGroup kartenOption;
     private LinearLayout ebenenOption;
 
@@ -77,8 +95,11 @@ public class MainActivity extends Activity implements LocationListener{
     public Location currentLocation;
     public GraphicsLayer graphicsLayer = new GraphicsLayer();
 
-    private MapViewHelper mMapViewHelper;
+    // Variables used for routing
+    String coordinates;
+    GraphicsLayer routeGraphicsLayer;
 
+    private MapViewHelper mMapViewHelper;
 
 
     @Override
@@ -97,7 +118,6 @@ public class MainActivity extends Activity implements LocationListener{
 
         mMapView.addLayer(graphicsLayer);
 
-        mMapView.addLayer(graphicsLayer);
 
         mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
             public void onStatusChanged(Object source, STATUS status) {
@@ -114,6 +134,7 @@ public class MainActivity extends Activity implements LocationListener{
         filterButton = (Button) findViewById(R.id.filterButton);
         tourenButton = (Button) findViewById(R.id.tourenButton);
         stopTourButton = (Button) findViewById(R.id.stopTourButton);
+        stopRouteButton = (Button) findViewById(R.id.stopRouteButton);
         kartenOption = (RadioGroup) findViewById(R.id.kartenOption);
         ebenenOption = (LinearLayout) findViewById(R.id.ebenenOption);
 
@@ -142,44 +163,67 @@ public class MainActivity extends Activity implements LocationListener{
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 5, this);
         currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
+        double lat = currentLocation.getLatitude();
+        double lon = currentLocation.getLongitude();
+        mMapView.centerAt(lat, lon, true);
+
         myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
 
-        graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.BLUE,10, SimpleMarkerSymbol.STYLE.CIRCLE)));
+        graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.parseColor("#85bdde"),10, SimpleMarkerSymbol.STYLE.CIRCLE)));
 
-        //Define what kartenButton will do on a click
+        //Defines what kartenButton will do on a click
         kartenButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 triggerKartenButtonAction();
             }
         });
 
-        //Define what ebenenButton will do on a click
+        //Defines what ebenenButton will do on a click
         ebenenButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 triggerEbenenButtonAction();
             }
         });
 
-        //Define what filterButton will do on a click
+        //Defines what filterButton will do on a click
         filterButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 triggerFilterButtonAction();
             }
         });
 
-        //Define what tourenButton will do on a click
+        //Defines what tourenButton will do on a click
         tourenButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 triggerTourenButtonAction();
             }
         });
 
-        //Define what stopTourButton will do on a click
+        //Defines what stopTourButton will do on a click
         stopTourButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                triggerStopTourButtonAction();
+            public void onClick(View v) {triggerStopTourButtonAction();
             }
         });
+
+        //Defines what stopTourButton will do on a click
+        stopRouteButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {triggerStopRouteButtonAction();
+            }
+        });
+
+        // If the currentLocation is empty a message appears
+        if (currentLocation == null) {
+            Context context = getApplicationContext();
+            CharSequence text = "Please enable GPS";
+            int duration = Toast.LENGTH_SHORT;
+            Toast.makeText(context, text, duration).show();
+        } else { // The coordinates of the current location of the user are
+            // saved
+            coordinates = "" + currentLocation.getLatitude() + ","
+                    + currentLocation.getLongitude();
+            // System.out.println(startingPoint);
+        }
+
     }
 
     // A bunch of methods to determine if the thing a user clicked on is a feature
@@ -191,7 +235,7 @@ public class MainActivity extends Activity implements LocationListener{
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         popUp.setContentView(inflater.inflate(R.layout.popup_feature, null, false));
         popUp.showAtLocation(findViewById(R.id.map), Gravity.FILL_HORIZONTAL, 0, 100);
-        popUp.update(50, 50, 650, 500);
+        popUp.update(50, 50, 800, 500);
 
         TextView v = (TextView) popUp.getContentView().findViewById(R.id.textView3);
         Button b = (Button) popUp.getContentView().findViewById(R.id.btnRoute);
@@ -202,11 +246,12 @@ public class MainActivity extends Activity implements LocationListener{
                 destination = ((Point)mIdentifiedGraphic.getGeometry()).getX() + "," + ((Point)mIdentifiedGraphic.getGeometry()).getY();
                 Log.d("POI coordinates: ", destination);
 
-                // Routing task starts here
-                Intent intent = new Intent(MainActivity.this, Routing.class);
-                intent.putExtra("destination", destination);
-                startActivity(intent);
-                new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                RouteCalculator myAsync = new RouteCalculator(myPoint);
+                myAsync.execute();
+
+                if (stopsVisible == true) {
+                    triggerStopTourButtonAction();
+                }
 
                 popUp.dismiss();
             }
@@ -236,7 +281,7 @@ public class MainActivity extends Activity implements LocationListener{
 
     }
 
-
+    //
     private void searchForFeature(float x, float y) {
 
         Point mapPoint = mMapView.toMapPoint(x, y);
@@ -304,22 +349,32 @@ public class MainActivity extends Activity implements LocationListener{
         Intent myIntent = new Intent(getBaseContext(),tourenMenu.class);
         //myIntent.setAction(Intent.ACTION_VIEW);
         startActivityForResult(myIntent, selectedTour);
-        if (stopsNo==1){
+        if (stopsVisible == true){
         deselectLayer(mFeatureLayerRoute);
         deselectLayer(mFeatureLayerStops);
-            stopsNo = 0;
-        routeNo = 0;}
+            stopsVisible = false;
+        routeVisible = false;}
+        if (routeLayerVisible == true) {
+            triggerStopRouteButtonAction();
+        }
     }
 
-    //Removes the tour from the map, needs editing
+    //Removes the tour from the map and makes the stopTourButton invisible
     private void triggerStopTourButtonAction(){
         stopTourButton.setVisibility(View.INVISIBLE);
         deselectLayer(mFeatureLayerRoute);
         deselectLayer(mFeatureLayerStops);
-        stopsNo = 0;
-        routeNo = 0;
-        //call method that removes tour layer
+        stopsVisible = false;
+        routeVisible = false;
     }
+
+    //Removes the route from the map and makes the stopRouteButton invisible
+    private void triggerStopRouteButtonAction(){
+        stopRouteButton.setVisibility(View.INVISIBLE);
+        routeGraphicsLayer.removeAll();
+        routeLayerVisible = false;
+    }
+
 
     //Responds when a radio button is clicked, showing a basemap for the year of choice
     public void onRadioButtonClicked(View view){
@@ -364,31 +419,34 @@ public class MainActivity extends Activity implements LocationListener{
         mMapView.removeLayer(oldWMS);
     }
 
-    //Reorders the layers
+    //Reorders the layers (this method could be improved)
     public void layerOrder(){
-        if (gartenNo == 1){
+        if (gartenVisible == true){
             deselectLayer(mFeatureLayerGarten);
             layerSelected("Garten");
         }
-        if (routeNo == 1){
+        if (routeVisible == true){
             deselectLayer(mFeatureLayerRoute);
             layerSelected("tour01_route");
         }
-        if (stopsNo == 1){
+        if (stopsVisible == true){
             deselectLayer(mFeatureLayerStops);
             layerSelected("tour01_stops");
         }
-        if (denkNo == 1){
+        if (denkVisible == true){
             deselectLayer(mFeatureLayerDenkm);
             layerSelected("Denkm");
         }
-        if (aussichtNo == 1){
+        if (aussichtVisible == true){
             deselectLayer(mFeatureLayerAussicht);
             layerSelected("Aussicht");
         }
+        if (routeLayerVisible == true){
+            mMapView.addLayer(routeGraphicsLayer);
+        }
     }
 
-    //Responds when a click box is clicked, showing the different layers
+    //Responds when a click box is selected, showing the different layers
     public void onCheckBoxClicked(View view) {
         boolean checked = ((CheckBox) view).isChecked();
 
@@ -397,12 +455,12 @@ public class MainActivity extends Activity implements LocationListener{
             case R.id.checkDenkm:
                 if (checked){
                     layerSelected("Denkm");
-                    denkNo = 1;
+                    denkVisible = true;
                     layerOrder();
                 }
                 else{
                     deselectLayer(mFeatureLayerDenkm);
-                    denkNo = 0;
+                    denkVisible = false;
                 }
                 break;
 
@@ -410,12 +468,12 @@ public class MainActivity extends Activity implements LocationListener{
             case R.id.checkGarten:
                 if (checked) {
                     layerSelected("Garten");
-                    gartenNo = 1;
+                    gartenVisible = true;
                     layerOrder();
                 }
                 else{
                     deselectLayer(mFeatureLayerGarten);
-                    gartenNo = 0;
+                    gartenVisible = false;
                 }
                 break;
 
@@ -423,18 +481,19 @@ public class MainActivity extends Activity implements LocationListener{
             case R.id.checkAussicht:
                 if (checked){
                     layerSelected("Aussicht");
-                    aussichtNo = 1;
+                    aussichtVisible = true;
                     layerOrder();
                 }
                 else{
                     deselectLayer(mFeatureLayerAussicht);
-                    aussichtNo = 0;
+                    aussichtVisible = false;
                 }
                 break;
 
         }
     }
 
+    //Adds the feature layers
     public void layerSelected(String layerName){
         mFeatureServiceURL = getStringURL(layerName, "URL_");
         if (layerName.equals("Denkm")){
@@ -460,16 +519,17 @@ public class MainActivity extends Activity implements LocationListener{
         mMapView.addLayer(graphicsLayer);
     }
 
+    //Removes the feature layers
     public void deselectLayer(ArcGISFeatureLayer layer){
         mMapView.removeLayer(layer);
     }
 
-    // method to create a StringIdentifier to access the strings.xml file
+    //Method to create a StringIdentifier to access the strings.xml file
     public static int getStringIdentifier(Context context, String name) {
         return context.getResources().getIdentifier(name, "string", context.getPackageName());
     }
 
-    // method to get create a FeatureLayer
+    //Method to get create a FeatureLayer
     public ArcGISFeatureLayer createFeatureLayer(String featureServiceURL){
         mFeatureLayer = new ArcGISFeatureLayer(featureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND);
         return mFeatureLayer;
@@ -508,6 +568,7 @@ public class MainActivity extends Activity implements LocationListener{
         return super.onOptionsItemSelected(item);
     }
 
+    //Gets the string used for URL
     public String getStringURL (String layerName, String layerType) {
         String layerURL = layerType+ layerName; //this is how the layerURL looks like in the strings.xml
         int identifier = getStringIdentifier(this, layerURL); //create an identifier to access the string from strings.xml with getString()
@@ -516,6 +577,7 @@ public class MainActivity extends Activity implements LocationListener{
     }
 
     @Override
+    //Gets the result from the tourenMenu activity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == selectedTour) {
             if (resultCode == RESULT_OK) {
@@ -525,24 +587,139 @@ public class MainActivity extends Activity implements LocationListener{
                 String stops=myValue+"_stops";
                 layerSelected(route);
                 layerSelected(stops);
-                stopsNo = 1;
-                routeNo = 1;
+                stopsVisible = true;
+                routeVisible = true;
                 layerOrder();
             }
         }
     }
 
     @Override
+    // Determines the user's location if the initial location is changed
     public void onLocationChanged(Location location) {
 
         currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
         graphicsLayer.removeAll();
-
         Point myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
+        graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.parseColor("#85bdde"),10, SimpleMarkerSymbol.STYLE.CIRCLE)));
+        layerOrder();
+        double lat = currentLocation.getLatitude();
+        double lon = currentLocation.getLongitude();
+        coordinates = "" + lat + "," + lon;
+        mMapView.centerAt(lat, lon, true);
 
-        graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.GREEN,10, SimpleMarkerSymbol.STYLE.CIRCLE)));
+    }
 
+    //Displays and determines the route
+    //Class made by CG with some modifications made by JB and RI
+    public class RouteCalculator extends AsyncTask<String, String, GraphicsLayer> {
+        private Point startingPoint;
+
+        public RouteCalculator(Point startingPoint) {
+            super();
+            this.startingPoint = startingPoint;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (routeLayerVisible == true) {
+                routeGraphicsLayer.removeAll();
+                routeLayerVisible = false;
+            }
+
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected GraphicsLayer doInBackground(String... params) {
+
+            UserCredentials creds = new UserCredentials();
+            creds.setUserAccount("IKGStud14", "i2rJVYT6c7");
+            String routeTaskURL = "http://route.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World";
+
+            try {
+                RouteTask routeTask = RouteTask.createOnlineRouteTask(routeTaskURL, creds);
+
+                RouteParameters routeParams = routeTask.retrieveDefaultRouteTaskParameters();
+                NetworkDescription description = routeTask.getNetworkDescription();
+                List<CostAttribute> costAttributes = description.getCostAttributes();
+
+                if (costAttributes.size() > 0)
+                    routeParams.setImpedanceAttributeName(costAttributes.get(0)
+                            .getName());
+
+                NAFeaturesAsFeature naFeatures = new NAFeaturesAsFeature();
+
+                routeGraphicsLayer = new GraphicsLayer();
+
+                Geometry mLocation = CoordinateConversion.decimalDegreesToPoint(coordinates, SpatialReference.create(SpatialReference.WKID_WGS84_WEB_MERCATOR));
+                routeGraphicsLayer.addGraphic(new Graphic(mLocation, new SimpleMarkerSymbol(Color.parseColor("#9ed2be"), 5, SimpleMarkerSymbol.STYLE.CIRCLE)));
+
+                Log.d("My Location: ", mLocation.toString());
+
+                // That's why we can directly create a point and use this for the routing
+                Geometry mDestination = new Point(Double.parseDouble(destination.split(",")[0]), Double.parseDouble(destination.split(",")[1]));
+                routeGraphicsLayer.addGraphic(new Graphic(mDestination, new SimpleMarkerSymbol(Color.parseColor("#9ed2be"), 15, SimpleMarkerSymbol.STYLE.X)));
+
+                Log.d("My Destination: ", mDestination.toString());
+
+                StopGraphic startPnt = new StopGraphic(mLocation);
+                StopGraphic endPnt = new StopGraphic(mDestination);
+
+                naFeatures.setFeatures(new Graphic[] { startPnt, endPnt });
+
+                routeParams.setStops(naFeatures);
+
+                naFeatures.setSpatialReference(mMapView.getSpatialReference());
+                routeParams.setOutSpatialReference(mMapView.getSpatialReference());
+
+                RouteResult mResults = routeTask.solve(routeParams);
+                List<Route> routes = mResults.getRoutes();
+                Route mRoute = routes.get(0);
+
+                Geometry routeGeom = mRoute.getRouteGraphic().getGeometry();
+                Graphic symbolGraphic = new Graphic(routeGeom,new SimpleLineSymbol(Color.parseColor("#9ed2be"), 3));
+
+                routeGraphicsLayer.addGraphic(symbolGraphic);
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return routeGraphicsLayer;
+        }
+
+        @Override
+        protected void onPostExecute(GraphicsLayer result) {
+            super.onPostExecute(result);
+            mMapView.addLayer(result);
+            routeLayerVisible = true;
+            layerOrder();
+            stopRouteButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mMapView.pause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mMapView.unpause();
     }
 
     @Override
