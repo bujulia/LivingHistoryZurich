@@ -415,6 +415,7 @@ public class MainActivity extends Activity implements LocationListener{
 
         createWMSURL(visible);
         layerOrder();
+        mMapView.addLayer(graphicsLayer);
 
         mMapView.removeLayer(oldWMS);
     }
