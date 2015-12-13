@@ -58,6 +58,7 @@ public class MainActivity extends Activity implements LocationListener{
 
     MapView mMapView;
     private Graphic mIdentifiedGraphic;
+    public PopupWindow lastPopUp = null;
     public ArcGISFeatureLayer mFeatureLayer;
     public ArcGISFeatureLayer mFeatureLayerDenkm;
     public ArcGISFeatureLayer mFeatureLayerGarten;
@@ -230,7 +231,11 @@ public class MainActivity extends Activity implements LocationListener{
     // and show a popup, if so. -------------------------------------------------------
     // See https://geonet.esri.com/thread/77290.
     private void showPopup(Graphic feature) {
+
+        // The last popup shown already on the map should be removed before the new one is displayed. Modification made by CG
+        removePopUP(lastPopUp);
         final PopupWindow popUp = new PopupWindow(this);
+        lastPopUp = popUp;
 
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         popUp.setContentView(inflater.inflate(R.layout.popup_feature, null, false));
@@ -279,6 +284,16 @@ public class MainActivity extends Activity implements LocationListener{
             v.setText("Kein Objekt gefunden");
         }
 
+    }
+
+    // Removes current open popup from the map. Created by CG
+    private void removePopUP (PopupWindow last){
+        if (last == null) {
+            return;
+        }
+        else {
+            last.dismiss();
+        }
     }
 
     //
@@ -415,6 +430,8 @@ public class MainActivity extends Activity implements LocationListener{
 
         createWMSURL(visible);
         layerOrder();
+        // Modification made by CG because the current location disappeared when the basemap changed.
+        // That already worked in previous versions
         mMapView.addLayer(graphicsLayer);
 
         mMapView.removeLayer(oldWMS);
