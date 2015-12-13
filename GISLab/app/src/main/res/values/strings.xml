@@ -37,7 +37,7 @@
     <string name="hintStart">z.B. 1900</string>
     <string name="hintEnd">z.B. 1920</string>
     <string name="hintDist">z.B. 100</string>
-    <string name="notWorking">Under construction</string>
+    <string name="notWorking">Noch im Gange</string>
     <string name="zahlen_angeben">Bitte Zahlen angeben, keine Buchstaben</string>
     <string name="distanz_groesser">Distanz muss grösser als ein Meter sein</string>
     <string name="jahr_groesser">Jahr muss grösser als 0 sein</string>
