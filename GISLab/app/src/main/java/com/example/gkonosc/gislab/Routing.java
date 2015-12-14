@@ -186,7 +186,7 @@ public class Routing extends Activity implements LocationListener{
         }
 
         myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
-        graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.GREEN, 10, SimpleMarkerSymbol.STYLE.CIRCLE)));
+        graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.parseColor("#85bdde"), 10, SimpleMarkerSymbol.STYLE.CIRCLE)));
         //coordinates =  "" + currentLocation.getLatitude() + "," + currentLocation.getLongitude();
 
         wmsURL = "http://www.gis.stadt-zuerich.ch/maps/services/wms/WMS-ZH-STZH-OGD/MapServer/WMSServer";

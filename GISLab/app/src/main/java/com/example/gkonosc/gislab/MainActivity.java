@@ -81,6 +81,7 @@ public class MainActivity extends Activity implements LocationListener{
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -107,6 +108,7 @@ public class MainActivity extends Activity implements LocationListener{
                 }
             }
         });
+
 
         //Initialize references to GUI elements
         kartenButton = (Button) findViewById(R.id.kartenButton);
