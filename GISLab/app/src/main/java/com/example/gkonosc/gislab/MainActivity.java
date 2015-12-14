@@ -9,7 +9,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -35,6 +34,7 @@ import com.esri.android.map.ogc.WMSLayer;
 import com.esri.android.runtime.ArcGISRuntime;
 import com.esri.android.toolkit.map.MapViewHelper;
 import com.esri.core.geometry.CoordinateConversion;
+import com.esri.core.geometry.Envelope;
 import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
 import com.esri.core.geometry.Point;
@@ -104,6 +104,8 @@ public class MainActivity extends Activity implements LocationListener{
     GraphicsLayer routeGraphicsLayer;
 
     private MapViewHelper mMapViewHelper;
+
+    public Envelope env = new Envelope();
 
 
 
@@ -176,14 +178,13 @@ public class MainActivity extends Activity implements LocationListener{
             CharSequence text = "Please enable GPS";
             int duration = Toast.LENGTH_SHORT;
             Toast.makeText(context, text, duration).show();
-            lat = 47.38;
-            lon = 8.54;
+            lat = 47.36622;
+            lon = 8.539744;
         }
         else if (currentLocation != null){
             lat = currentLocation.getLatitude();
             lon = currentLocation.getLongitude();
-            myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
-            graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.parseColor("#85bdde"),10, SimpleMarkerSymbol.STYLE.CIRCLE)));
+            getGraphicFromLocation();
         }
         else {
             return;
@@ -235,9 +236,10 @@ public class MainActivity extends Activity implements LocationListener{
     // A bunch of methods to determine if the thing a user clicked on is a feature
     // and show a popup, if so. -------------------------------------------------------
     // See https://geonet.esri.com/thread/77290.
+    // created by Dominik Bucher, adjusted by JB
     private void showPopup(Graphic feature) {
 
-        // The last popup shown already on the map should be removed before the new one is displayed. Modification made by CG
+        // The last popup shown already on the map should be removed before the new one is displayed. Created by JB, Modification made by CG
         removePopUP(lastPopUp);
         final PopupWindow popUp = new PopupWindow(this);
         lastPopUp = popUp;
@@ -253,8 +255,15 @@ public class MainActivity extends Activity implements LocationListener{
             @Override
             public void onClick(View view) {
 
-                destination = ((Point)mIdentifiedGraphic.getGeometry()).getX() + "," + ((Point)mIdentifiedGraphic.getGeometry()).getY();
-                Log.d("POI coordinates: ", destination);
+                if (mIdentifiedGraphic.getGeometry().getType() == Geometry.Type.POINT){
+                    destination = ((Point)mIdentifiedGraphic.getGeometry()).getX() + "," + ((Point)mIdentifiedGraphic.getGeometry()).getY();
+                    Log.d("POI coordinates: ", destination);
+                }
+                else {
+                    mIdentifiedGraphic.getGeometry().queryEnvelope(env);
+                    destination = env.getCenter().getX() + "," + env.getCenter().getY();
+                    Log.d("Geometry center: ", destination);
+                }
 
                 RouteCalculator myAsync = new RouteCalculator(myPoint);
                 myAsync.execute();
@@ -266,12 +275,13 @@ public class MainActivity extends Activity implements LocationListener{
                 popUp.dismiss();
             }
         });
+
+        // update the Text in the popup, created by JB
         Log.d("tags", feature.getAttributes().toString());
         if (feature.getAttributeValue("OBJEKTBEZE") != null) {
             v.setText(" Denkmalpflegeinventarobjekt \n Bezeichnung: " + feature.getAttributeValue("OBJEKTBEZE").toString()+
                     "\n N\u00e4here Bezeichnung: "+ feature.getAttributeValue("NAEHEREBEZ").toString()+
                     "\n Baujahr: "+ feature.getAttributeValue("BAUJAHR").toString());
-
         }
         else if (feature.getAttributeValue("NAME")!= null) {
             v.setText(" Aussichtspunkt \n Name: " + feature.getAttributeValue("NAME").toString());
@@ -301,7 +311,7 @@ public class MainActivity extends Activity implements LocationListener{
         }
     }
 
-    //
+    // checks for feature layers and features at the pressed location, created by JB
     private void searchForFeature(float x, float y) {
 
         Point mapPoint = mMapView.toMapPoint(x, y);
@@ -324,6 +334,7 @@ public class MainActivity extends Activity implements LocationListener{
         }
     }
 
+    // gets the feature graphic at the location, used in searchForFeature, created by JB
     private Graphic getFeature(ArcGISFeatureLayer fLayer, float x, float y) {
 
         // Get the graphics near the Point.
@@ -364,7 +375,7 @@ public class MainActivity extends Activity implements LocationListener{
         startActivity(intent);
     }
 
-    //Creates a new intent -> opens the touren menu
+    //Creates a new intent -> opens the touren menu, created by RI
     private void triggerTourenButtonAction(){
         Intent myIntent = new Intent(getBaseContext(),tourenMenu.class);
         //myIntent.setAction(Intent.ACTION_VIEW);
@@ -379,7 +390,7 @@ public class MainActivity extends Activity implements LocationListener{
         }
     }
 
-    //Removes the tour from the map and makes the stopTourButton invisible
+    //Removes the tour from the map and makes the stopTourButton invisible, created by JB and RI
     private void triggerStopTourButtonAction(){
         stopTourButton.setVisibility(View.INVISIBLE);
         deselectLayer(mFeatureLayerRoute);
@@ -388,7 +399,7 @@ public class MainActivity extends Activity implements LocationListener{
         routeVisible = false;
     }
 
-    //Removes the route from the map and makes the stopRouteButton invisible
+    //Removes the route from the map and makes the stopRouteButton invisible, created by JB and RI
     private void triggerStopRouteButtonAction(){
         stopRouteButton.setVisibility(View.INVISIBLE);
         routeGraphicsLayer.removeAll();
@@ -396,7 +407,7 @@ public class MainActivity extends Activity implements LocationListener{
     }
 
 
-    //Responds when a radio button is clicked, showing a basemap for the year of choice
+    //Responds when a radio button is clicked, showing a basemap for the year of choice, created by RI
     public void onRadioButtonClicked(View view){
         boolean checked = ((RadioButton) view).isChecked();
         oldWMS = wmsLayer;
@@ -442,7 +453,7 @@ public class MainActivity extends Activity implements LocationListener{
         mMapView.removeLayer(oldWMS);
     }
 
-    //Reorders the layers (this method could be improved)
+    //Reorders the layers (this method could be improved) , created by RI
     public void layerOrder(){
         if (gartenVisible == true){
             deselectLayer(mFeatureLayerGarten);
@@ -469,7 +480,7 @@ public class MainActivity extends Activity implements LocationListener{
         }
     }
 
-    //Responds when a click box is selected, showing the different layers
+    //Responds when a click box is selected, showing the different layers, created by RI
     public void onCheckBoxClicked(View view) {
         boolean checked = ((CheckBox) view).isChecked();
 
@@ -516,7 +527,7 @@ public class MainActivity extends Activity implements LocationListener{
         }
     }
 
-    //Adds the feature layers
+    //Adds the feature layers, created by CG, modified by JB and RI
     public void layerSelected(String layerName){
         mFeatureServiceURL = getStringURL(layerName, "URL_");
         if (layerName.equals("Denkm")){
@@ -542,23 +553,23 @@ public class MainActivity extends Activity implements LocationListener{
         mMapView.addLayer(graphicsLayer);
     }
 
-    //Removes the feature layers
+    //Removes the feature layers, created by JB
     public void deselectLayer(ArcGISFeatureLayer layer){
         mMapView.removeLayer(layer);
     }
 
-    //Method to create a StringIdentifier to access the strings.xml file
+    //Method to create a StringIdentifier to access the strings.xml file, created by JB
     public static int getStringIdentifier(Context context, String name) {
         return context.getResources().getIdentifier(name, "string", context.getPackageName());
     }
 
-    //Method to get create a FeatureLayer
+    //Method to get create a FeatureLayer, created by JB
     public ArcGISFeatureLayer createFeatureLayer(String featureServiceURL){
         mFeatureLayer = new ArcGISFeatureLayer(featureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND);
         return mFeatureLayer;
     }
 
-    //Method to create the WMS URL
+    //Method to create the WMS URL, created by CG
     public void createWMSURL(String layer) {
         //Sets the WMS layer
         wmsURL = "http://www.gis.stadt-zuerich.ch/maps/services/wms/WMS-ZH-STZH-OGD/MapServer/WMSServer";
@@ -570,28 +581,7 @@ public class MainActivity extends Activity implements LocationListener{
         mMapView.addLayer(wmsLayer);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    //Gets the string used for URL
+    //Gets the string used for URL, created by JB
     public String getStringURL (String layerName, String layerType) {
         String layerURL = layerType+ layerName; //this is how the layerURL looks like in the strings.xml
         int identifier = getStringIdentifier(this, layerURL); //create an identifier to access the string from strings.xml with getString()
@@ -600,7 +590,7 @@ public class MainActivity extends Activity implements LocationListener{
     }
 
     @Override
-    //Gets the result from the tourenMenu activity
+    //Gets the result from the tourenMenu activity, created by RI
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == selectedTour) {
             if (resultCode == RESULT_OK) {
@@ -618,13 +608,12 @@ public class MainActivity extends Activity implements LocationListener{
     }
 
     @Override
-    // Determines the user's location if the initial location is changed
+    // Determines the user's location if the initial location is changed, created by CG
     public void onLocationChanged(Location location) {
 
         currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         graphicsLayer.removeAll();
-        Point myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
-        graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.parseColor("#85bdde"),10, SimpleMarkerSymbol.STYLE.CIRCLE)));
+        getGraphicFromLocation();
         layerOrder();
         double lat = currentLocation.getLatitude();
         double lon = currentLocation.getLongitude();
@@ -632,6 +621,12 @@ public class MainActivity extends Activity implements LocationListener{
         mMapView.centerAt(lat, lon, true);
 
     }
+
+    // creates a graphic from myPoint, created by CG, put in a method by JB
+    public void getGraphicFromLocation() {
+        Point myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
+        graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.parseColor("#85bdde"),10, SimpleMarkerSymbol.STYLE.CIRCLE)));
+    };
 
     //Displays and determines the route
     //Class made by CG with some modifications made by JB and RI
@@ -726,6 +721,27 @@ public class MainActivity extends Activity implements LocationListener{
             layerOrder();
             stopRouteButton.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
