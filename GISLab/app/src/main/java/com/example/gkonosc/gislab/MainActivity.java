@@ -9,6 +9,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -95,6 +96,8 @@ public class MainActivity extends Activity implements LocationListener{
     private LocationManager locationManager;
     public Location currentLocation;
     public GraphicsLayer graphicsLayer = new GraphicsLayer();
+    public double lat;
+    public double lon;
 
     // Variables used for routing
     String coordinates;
@@ -164,13 +167,27 @@ public class MainActivity extends Activity implements LocationListener{
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 5, this);
         currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        double lat = currentLocation.getLatitude();
-        double lon = currentLocation.getLongitude();
+        // App starts at a given coordinate even when the GPS of the user is not activated
+        // Modification made by CG
+        if (currentLocation == null){
+            Context context = getApplicationContext();
+            CharSequence text = "Please enable GPS";
+            int duration = Toast.LENGTH_SHORT;
+            Toast.makeText(context, text, duration).show();
+            lat = 47.38;
+            lon = 8.54;
+        }
+        else if (currentLocation != null){
+            lat = currentLocation.getLatitude();
+            lon = currentLocation.getLongitude();
+            myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
+            graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.parseColor("#85bdde"),10, SimpleMarkerSymbol.STYLE.CIRCLE)));
+        }
+        else {
+            return;
+        }
+
         mMapView.centerAt(lat, lon, true);
-
-        myPoint = GeometryEngine.project(currentLocation.getLongitude(), currentLocation.getLatitude(), SpatialReference.create(102100));
-
-        graphicsLayer.addGraphic(new Graphic(myPoint, new SimpleMarkerSymbol(Color.parseColor("#85bdde"),10, SimpleMarkerSymbol.STYLE.CIRCLE)));
 
         //Defines what kartenButton will do on a click
         kartenButton.setOnClickListener(new View.OnClickListener() {
@@ -211,20 +228,6 @@ public class MainActivity extends Activity implements LocationListener{
             public void onClick(View v) {triggerStopRouteButtonAction();
             }
         });
-
-        // If the currentLocation is empty a message appears
-        if (currentLocation == null) {
-            Context context = getApplicationContext();
-            CharSequence text = "Please enable GPS";
-            int duration = Toast.LENGTH_SHORT;
-            Toast.makeText(context, text, duration).show();
-        } else { // The coordinates of the current location of the user are
-            // saved
-            coordinates = "" + currentLocation.getLatitude() + ","
-                    + currentLocation.getLongitude();
-            // System.out.println(startingPoint);
-        }
-
     }
 
     // A bunch of methods to determine if the thing a user clicked on is a feature
