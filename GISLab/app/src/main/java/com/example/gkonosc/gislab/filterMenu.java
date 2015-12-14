@@ -11,7 +11,7 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 
 
-
+//Was never implemented and hence, this activity does nothing
 public class filterMenu extends Activity {
 
     //References to GUI elements
@@ -23,7 +23,6 @@ public class filterMenu extends Activity {
 
     //To be added
     private ExpandableListView gartenList;
-
 
 
     @Override

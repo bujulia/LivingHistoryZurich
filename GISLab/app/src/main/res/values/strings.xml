@@ -3,21 +3,27 @@
 
     <string name="action_settings">Settings</string>
 
+    <!--Strings used for the buttons in the main menu -->
     <string name="buttonKarten">Karten</string>
     <string name="buttonEbenen">Ebenen</string>
     <string name="buttonFilter">Filter</string>
     <string name="buttonTouren">Touren</string>
+    <string name="buttonStopTour">Stop tour</string>
+    <string name="buttonStopRoute">Stop route</string>
 
-
+    <!--Strings used for the radio buttons -->
     <string name="radioAktuell">Aktuell</string>
     <string name="radio1970">1970</string>
     <string name="radio1900">1900</string>
     <string name="radio1860">1860</string>
     <string name="radio1793">1793</string>
+
+    <!--Strings used for the check boxes -->
     <string name="checkDenkm">Denkmalpflege</string>
     <string name="checkGarten">Gartendenkmal</string>
     <string name="checkAussicht">Aussichtspunkte</string>
 
+    <!--Strings used for the filter menu -->
     <string name="title_activity_filter_menu">Filter</string>
     <string name="lblDaten">Daten filtern</string>
     <string name="lblSuchdis">Suchdistanz</string>
@@ -31,14 +37,14 @@
     <string name="hintStart">z.B. 1900</string>
     <string name="hintEnd">z.B. 1920</string>
     <string name="hintDist">z.B. 100</string>
-    <string name="notWorking">Under construction</string>
-
-    <string name="Tour_1_Description">Tour 1: Innenstadt\nDauer: 1.5h\nerschienen: 2005\naktualisiert: 2012</string>
-    <string name="Tour_4_Description">Tour 4: Wiedikon\nDauer: 1.75h\nerschienen: 2005\naktualisiert: 2014</string>
-
+    <string name="notWorking">Noch im Gange</string>
     <string name="zahlen_angeben">Bitte Zahlen angeben, keine Buchstaben</string>
     <string name="distanz_groesser">Distanz muss grösser als ein Meter sein</string>
     <string name="jahr_groesser">Jahr muss grösser als 0 sein</string>
+
+    <!--Strings used for the tours -->
+    <string name="Tour_1_Description">Tour 1: Innenstadt\nDauer: 1.5h\nerschienen: 2005\naktualisiert: 2012</string>
+    <string name="Tour_4_Description">Tour 4: Wiedikon\nDauer: 1.75h\nerschienen: 2005\naktualisiert: 2014</string>
 
     <string name="title_activity_touren_menu">Touren</string>
 
@@ -53,21 +59,5 @@
     <string name="URL_map_Denkm">http://tiles.arcgis.com/tiles/i9MtZ1vtgD3gTnyL/arcgis/rest/services/OGD_data/MapServer/0</string>
     <string name="URL_Aussicht">http://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/OGD_data/FeatureServer/1</string>
     <string name="URL_map_Aussicht">http://tiles.arcgis.com/tiles/i9MtZ1vtgD3gTnyL/arcgis/rest/services/OGD_data/MapServer/1</string>
-
-    <string-array name="gartenTypen">
-        <item>Friedhof </item>
-        <item>Garten oder Anlage bei Mehrfamilienhaus oder Reihenhaussiedlung </item>
-        <item>Haus- oder Villengarten </item>
-        <item>Kirchenumgebung </item>
-        <item>Oeffentliche oder halböffentliche Anlage </item>
-        <item>Schulhausanlage </item>
-        <item>Strand- oder Freibad</item>
-        <item>Uebrige Anlage oder Garten</item>
-        <item>Vorgarten</item>
-        <item>Bäuerliche Umgebung</item>
-        <item>-</item>
-    </string-array>
-
-
 
 </resources>
